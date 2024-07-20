@@ -1,5 +1,3 @@
-import Image from "next/image";
-import Link from "next/link";
 import CompanyCard from "./CompanyCard";
 
 const Companies = ({ companies, activeCompanies, owner, userId }) => {

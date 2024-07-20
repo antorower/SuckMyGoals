@@ -86,13 +86,17 @@ UserSchema.pre("save", function (next) {
 
 // Add an account to the accounts array
 UserSchema.methods.addAccount = function (accountId) {
-  this.accounts.push(accountId);
+  if(!this.accounts.includes(accountId)) {
+    this.accounts.push(accountId);
+  }
   return this.save();
 };
 
 // Remove an account from the accounts array
 UserSchema.methods.removeAccount = function (accountId) {
-  this.accounts.pull(accountId);
+  if(this.accounts.includes(accountId)) {
+    this.accounts.pull(accountId);
+  }
   return this.save();
 };
 

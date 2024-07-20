@@ -5,13 +5,15 @@ import { notFound } from "next/navigation";
 import Name from "@/components/User/Name";
 import { currentUser } from "@clerk/nextjs/server";
 import RelatedUser from "@/components/User/RelatedUser";
-import Accounts from "@/components/User/Accounts";
+import Accounts from "@/components/User/Accounts/Accounts";
 import { GetAllCompanies } from "@/lib/CompanyActions";
 import Companies from "@/components/User/Companies/Companies";
 
 const User = async ({ searchParams }) => {
   const clerkUser = await currentUser();
   if (!clerkUser) notFound();
+
+  const selectedAccount = searchParams.account;
 
   let profileUserId;
   let user;
@@ -31,7 +33,7 @@ const User = async ({ searchParams }) => {
       <Name firstName={user.firstName} lastName={user.lastName} userId={user._id.toString()} />
       {(!profileUserId || profileUserId === clerkUser.publicMetadata.mongoId) && <RelatedUser userId={user._id.toString()} relatedUserFirstName={user.relatedUser?.firstName} relatedUserLastName={user.relatedUser?.lastName} />}
       <Companies companies={allCompanies} userId={user._id.toString()} activeCompanies={user.activeCompanies} owner={!profileUserId || profileUserId === clerkUser.publicMetadata.mongoid} />
-      <Accounts userId={profileUserId} />
+      <Accounts selectedAccount={selectedAccount} />
     </div>
   );
 };
