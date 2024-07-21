@@ -16,7 +16,7 @@ export default async function RootLayout({ children }) {
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={`${inter.className} bg-gray-950 text-white`}>
+        <body className={`${inter.className} bg-gray-950 text-white pb-[80px]`}>
           {children}
           <ToastContainer position="bottom-right" autoClose={8000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable={false} pauseOnHover theme="dark" />
         </body>

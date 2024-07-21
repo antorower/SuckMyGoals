@@ -86,7 +86,7 @@ UserSchema.pre("save", function (next) {
 
 // Add an account to the accounts array
 UserSchema.methods.addAccount = function (accountId) {
-  if(!this.accounts.includes(accountId)) {
+  if (!this.accounts.includes(accountId)) {
     this.accounts.push(accountId);
   }
   return this.save();
@@ -94,10 +94,22 @@ UserSchema.methods.addAccount = function (accountId) {
 
 // Remove an account from the accounts array
 UserSchema.methods.removeAccount = function (accountId) {
-  if(this.accounts.includes(accountId)) {
+  if (this.accounts.includes(accountId)) {
     this.accounts.pull(accountId);
   }
   return this.save();
+};
+
+UserSchema.methods.getAllAccounts = async function () {
+  await this.populate({
+    path: "accounts",
+    match: { status: { $in: ["WaitingPurchase", "Live", "NeedUpgrade", "WaitingPayout", "PayoutRequestDone", "MoneySended"] } },
+    populate: {
+      path: "company",
+      model: "Company",
+    },
+  });
+  return this.accounts;
 };
 
 // Add an account to the accounts array

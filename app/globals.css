@@ -13,11 +13,11 @@
 }
 
 .input {
-  @apply bg-gray-900 border border-gray-700 text-gray-400  placeholder:text-gray-500 px-3 py-2 focus:outline focus:outline-1 focus:outline-gray-600;
+  @apply bg-gray-900 border w-full border-gray-700 text-gray-400  placeholder:text-gray-500 px-3 py-2 focus:outline focus:outline-1 focus:outline-gray-600;
 }
 
 .submitButton {
-  @apply bg-blue-700 hover:bg-blue-600 px-3 py-2 rounded outline-none;
+  @apply bg-blue-700 hover:bg-blue-600 px-3 py-2 w-full rounded outline-none;
 }
 
 /* For Chrome, Safari, Edge, and Opera */

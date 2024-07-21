@@ -42,6 +42,8 @@ const CompanySchema = new mongoose.Schema(
       maxRiskPerTradeSlowStrategy: Number,
       note: String,
     },
+    startingHour: Number,
+    endingHour: Number,
   },
   { timestamps: true }
 );

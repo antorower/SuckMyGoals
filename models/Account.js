@@ -46,6 +46,10 @@ const AccountSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Payout",
     },
+    trades: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Trade",
+    },
     purchaseDate: Date,
     firstTradeDate: Date,
     targetReachedDate: Date,
@@ -71,7 +75,7 @@ AccountSchema.methods.sendMoneyForPurchase = async function (userId, companyId, 
   this.balance = capital;
   this.cost = cost;
   this.status = "WaitingPurchase";
-  this.note = "Funds has been sent to your wallet. Purchase your account and enter your account number.";
+  this.note = "Funds has been sent to your wallet. Purchase your account and save your account number.";
   return await this.save();
 };
 

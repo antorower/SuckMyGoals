@@ -33,7 +33,7 @@ const User = async ({ searchParams }) => {
       <Name firstName={user.firstName} lastName={user.lastName} userId={user._id.toString()} />
       {(!profileUserId || profileUserId === clerkUser.publicMetadata.mongoId) && <RelatedUser userId={user._id.toString()} relatedUserFirstName={user.relatedUser?.firstName} relatedUserLastName={user.relatedUser?.lastName} />}
       <Companies companies={allCompanies} userId={user._id.toString()} activeCompanies={user.activeCompanies} owner={!profileUserId || profileUserId === clerkUser.publicMetadata.mongoid} />
-      <Accounts selectedAccount={selectedAccount} />
+      <Accounts selectedAccount={selectedAccount} userId={user._id.toString()} />
     </div>
   );
 };
