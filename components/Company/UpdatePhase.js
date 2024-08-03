@@ -5,7 +5,7 @@ import Link from "next/link";
 import { UpdatePhaseProperties } from "@/lib/CompanyActions";
 import { useRouter } from "next/navigation";
 
-const UpdatePhase = ({ companyId, phase, name, target, dailyDrawdown, maxDrawdown, maxRiskPerTradeFastStrategy, maxRiskPerTradeSlowStrategy, note, minimumProfit }) => {
+const UpdatePhase = ({ companyId, phase, name, target, dailyDrawdown, maxDrawdown, maxRiskPerTrade, note, minimumProfit }) => {
   const router = useRouter();
 
   const [isButtonActive, setIsButtonActive] = useState(true);
@@ -14,8 +14,7 @@ const UpdatePhase = ({ companyId, phase, name, target, dailyDrawdown, maxDrawdow
   const [newTarget, setNewTarget] = useState(target);
   const [newDailyDrawdown, setNewDailyDrawdown] = useState(dailyDrawdown);
   const [newMaxDrawdown, setNewMaxDrawdown] = useState(maxDrawdown);
-  const [newMaxRiskPerTradeSlowStrategy, setNewMaxRiskSlow] = useState(maxRiskPerTradeSlowStrategy);
-  const [newMaxRiskPerTradeFastStrategy, setNewMaxRiskFast] = useState(maxRiskPerTradeFastStrategy);
+  const [newMaxRiskPerTrade, setNewMaxRiskPerTrade] = useState(maxRiskPerTrade);
   const [newMinimumProfit, setNewMinimumProfit] = useState(minimumProfit);
   const [newNote, setNewNote] = useState(note);
 
@@ -29,8 +28,7 @@ const UpdatePhase = ({ companyId, phase, name, target, dailyDrawdown, maxDrawdow
         target: newTarget,
         dailyDrawdown: newDailyDrawdown,
         maxDrawdown: newMaxDrawdown,
-        maxRiskPerTradeSlowStrategy: newMaxRiskPerTradeSlowStrategy,
-        maxRiskPerTradeFastStrategy: newMaxRiskPerTradeFastStrategy,
+        maxRiskPerTrade: newMaxRiskPerTrade,
         note: newNote,
       },
     };
@@ -52,12 +50,11 @@ const UpdatePhase = ({ companyId, phase, name, target, dailyDrawdown, maxDrawdow
     <div className="form form-small">
       <div className="self-center text-center mb-2">{`Update ${name ? name : `Phase ${phase}`}`}</div>
       <input type="text" placeholder="Name" className="input" value={newName} onChange={(e) => setNewName(e.target.value)} />
-      <input type="number" placeholder="Target" className="input" value={newTarget} onChange={(e) => setNewTarget(e.target.value)} />
-      <input type="number" placeholder="Daily Drawdown" className="input" value={newDailyDrawdown} onChange={(e) => setNewDailyDrawdown(e.target.value)} />
-      <input type="number" placeholder="Max Drawdown" className="input" value={newMaxDrawdown} onChange={(e) => setNewMaxDrawdown(e.target.value)} />
-      <input type="number" placeholder="Max Risk Per Trade (Slow)" className="input" value={newMaxRiskPerTradeSlowStrategy} onChange={(e) => setNewMaxRiskSlow(e.target.value)} />
-      <input type="number" placeholder="Max Risk Per Trade (Fast)" className="input" value={newMaxRiskPerTradeFastStrategy} onChange={(e) => setNewMaxRiskFast(e.target.value)} />
-      {phase === 3 && <input type="number" placeholder="Minimum Profit" className="input" value={newMinimumProfit} onChange={(e) => setNewMinimumProfit(e.target.value)} />}
+      <input type="number" placeholder="Target" className="input" value={newTarget} onChange={(e) => setNewTarget(Number(e.target.value))} />
+      <input type="number" placeholder="Daily Drawdown" className="input" value={newDailyDrawdown} onChange={(e) => setNewDailyDrawdown(Number(e.target.value))} />
+      <input type="number" placeholder="Max Drawdown" className="input" value={newMaxDrawdown} onChange={(e) => setNewMaxDrawdown(Number(e.target.value))} />
+      <input type="number" placeholder="Max Risk Per Trade" className="input" value={newMaxRiskPerTrade} onChange={(e) => setNewMaxRiskPerTrade(Number(e.target.value))} />
+      {phase === 3 && <input type="number" placeholder="Minimum Profit" className="input" value={newMinimumProfit} onChange={(e) => setNewMinimumProfit(Number(e.target.value))} />}
       <textarea type="note" placeholder="Note" className="input" value={newNote} onChange={(e) => setNewNote(e.target.value)} />
       <button onClick={UpdatePhase} disabled={!isButtonActive} className="submitButton">
         {name ? "Update" : "Create"}

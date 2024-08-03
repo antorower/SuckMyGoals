@@ -3,7 +3,7 @@ import MenuItem from "./MenuItem";
 
 const AdminMainMenu = () => {
   return (
-    <div className="flex items-center border-t border-gray-800 w-screen h-[60px] fixed bottom-0 z-50 bg-gray-950">
+    <div className="flex items-center border-t border-gray-800 w-screen sticky bottom-0 z-50 bg-gray-950">
       <MenuItem link="/investment" icon="capital" size={30} alt="capital-icon" border={true} />
       <MenuItem link="/users" icon="users" size={35} alt="users-icon" border={true} />
       <MenuItem link="/trades" icon="trades" size={38} alt="trades-icon" border={true} />

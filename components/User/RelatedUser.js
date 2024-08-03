@@ -8,7 +8,7 @@ import { AddRelatedUser } from "@/lib/UserActions";
 import { RemoveRelatedUser } from "@/lib/UserActions";
 import { useRouter } from "next/navigation";
 
-const RelatedUser = ({ userId, relatedUserFirstName, relatedUserLastName }) => {
+const RelatedUser = ({ userId, relatedUserFirstName }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [relatedUserId, setRelatedUserId] = useState("");
   const router = useRouter();
@@ -38,12 +38,12 @@ const RelatedUser = ({ userId, relatedUserFirstName, relatedUserLastName }) => {
   };
 
   return (
-    <div className="flex flex-col gap-2 items-end justify-center px-4 py-2 relative">
+    <div className="flex flex-col gap-2 items-end justify-center px-4">
       <motion.button whileHover={{ scale: 1.1 }} onClick={() => setIsExpanded(!isExpanded)} className="text-xs select-none">
         Do you use {relatedUserFirstName ? relatedUserFirstName : "second"} account?
       </motion.button>
       {isExpanded && !relatedUserFirstName && (
-        <div className="border border-gray-700 py-2 px-2 rounded gap-2 flex flex-col absolute top-[35px] right-[15px] z-50">
+        <div className="border border-gray-700 py-2 px-2 rounded gap-2 flex flex-col">
           <input autoFocus value={relatedUserId} onChange={(e) => setRelatedUserId(e.target.value)} type="text" placeholder="User ID" className="input outline-none focus:outline-none" />
           <button onClick={AddUser} className="submitButton">
             Add
@@ -51,7 +51,7 @@ const RelatedUser = ({ userId, relatedUserFirstName, relatedUserLastName }) => {
         </div>
       )}
       {isExpanded && relatedUserFirstName && (
-        <div className="border border-gray-700 py-2 px-2 rounded gap-2 flex flex-col absolute top-[35px] right-[15px] z-50">
+        <div className="border border-gray-700 py-2 px-2 rounded gap-2 flex flex-col">
           <motion.button whileHover={{ scale: 0.95 }} autoFocus onClick={RemoveUser} className="submitButton">
             Remove {relatedUserFirstName}
           </motion.button>

@@ -12,6 +12,7 @@ const ActivitySchema = new mongoose.Schema(
     },
     title: String,
     description: String,
+    needCheck: Boolean,
   },
   { timestamps: true }
 );

@@ -1,7 +1,7 @@
 import { currentUser } from "@clerk/nextjs/server";
 import UpdateDetails from "@/components/Company/UpdateDetails";
 import UpdatePhase from "@/components/Company/UpdatePhase";
-import { GetCompany } from "@/lib/CompanyActions";
+import { GetCompanyById } from "@/lib/CompanyActions";
 import { notFound } from "next/navigation";
 
 const Update = async ({ searchParams }) => {
@@ -12,8 +12,12 @@ const Update = async ({ searchParams }) => {
 
   let company;
   if (companyId) {
-    company = await GetCompany(companyId);
+    company = await GetCompanyById(companyId);
     if (!company) notFound();
+    if (company.error) {
+      toast.error(company.message);
+      notFound();
+    }
   }
 
   const phase = Number(searchParams.phase);

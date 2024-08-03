@@ -3,8 +3,9 @@ import PlusButton from "@/components/General/PlusButton";
 import { GetAllUserAccounts } from "@/lib/UserActions";
 import WaitingPurchaseAccountCard from "./WaitingPurchaseAccountCard";
 import LiveAccountCard from "./LiveAccountCard";
+import NeedUpgradeCard from "./NeedUpgradeCard";
 
-const Accounts = async ({ userId }) => {
+const Accounts = async ({ userId, admin, owner }) => {
   const allAccounts = await GetAllUserAccounts(userId);
 
   let waitingPurchaseAccounts;
@@ -24,10 +25,31 @@ const Accounts = async ({ userId }) => {
   }
 
   return (
-    <div className="flex flex-col">
-      <div className="flex flex-wrap justify-center gap-4 px-4">{waitingPurchaseAccounts && waitingPurchaseAccounts.length > 0 && waitingPurchaseAccounts.map((account) => <WaitingPurchaseAccountCard account={account} key={account._id.toString()} />)}</div>
-      <div className="flex flex-wrap justify-center gap-4 px-4">{liveAccounts && liveAccounts.length > 0 && liveAccounts.map((account) => <LiveAccountCard account={account} key={account._id.toString()} />)}</div>
-      <PlusButton link={`/accounts/add?user=${userId}`} />
+    <div className="flex flex-col gap-4">
+      {waitingPurchaseAccounts && waitingPurchaseAccounts.length > 0 && (
+        <div className="flex flex-wrap justify-center gap-4 px-4">
+          {waitingPurchaseAccounts.map((account) => (
+            <WaitingPurchaseAccountCard account={account} key={account._id.toString()} admin={admin} owner={owner} />
+          ))}
+        </div>
+      )}
+
+      {liveAccounts && liveAccounts.length > 0 && (
+        <div className="flex flex-wrap justify-center gap-4 px-4">
+          {liveAccounts.map((account) => (
+            <LiveAccountCard account={account} key={account._id.toString()} admin={admin} owner={owner} />
+          ))}
+        </div>
+      )}
+
+      {needUpgradeAccounts && needUpgradeAccounts.length > 0 && (
+        <div className="flex flex-wrap justify-center gap-4 px-4">
+          {needUpgradeAccounts.map((account) => (
+            <NeedUpgradeCard account={account} key={account._id.toString()} admin={admin} owner={owner} />
+          ))}
+        </div>
+      )}
+      {admin && <PlusButton link={`/accounts/add?user=${userId}`} />}
     </div>
   );
 };

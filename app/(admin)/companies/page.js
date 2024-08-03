@@ -12,7 +12,7 @@ const Companies = async () => {
   const companies = await GetAllCompanies();
 
   return (
-    <div className="flex flex-col gap-6 h-full w-full max-w-[600px] justify-center items-center p-6 m-auto">
+    <div className="flex flex-col gap-6 h-full w-full max-w-[600px] justify-center items-center m-auto">
       {companies && companies.length > 0 && companies.map((company) => <CompanyCard key={company._id} company={company} />)}
       {(!companies || companies.length === 0) && (
         <Link href="/companies/update" className="flex justify-center text-blue-300 animate-pulse">

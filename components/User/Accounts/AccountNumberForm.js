@@ -9,6 +9,10 @@ const AccountNumberForm = ({ accountId }) => {
   const router = useRouter();
 
   const UpdateAccountNumber = async () => {
+    if (!accountNumber || accountNumber === "") {
+      toast.warn("Please set the new account number");
+      return;
+    }
     const response = await RegisterAccountNumber(accountId, accountNumber);
     if (response.error) {
       toast.error(response.message);

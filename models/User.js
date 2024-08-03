@@ -10,12 +10,14 @@ const UserSchema = new mongoose.Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      default: [],
     },
   ],
   activeCompanies: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Company",
+      default: [],
     },
   ],
   roles: {
@@ -70,123 +72,22 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  lastTradeOpened: {
+    type: Date,
+    default: () => new Date(),
+  },
 });
 
 UserSchema.pre("save", function (next) {
-  if (this.firstName) {
+  if (this.isModified("firstName") && this.firstName) {
     this.firstName = this.firstName.charAt(0).toUpperCase() + this.firstName.slice(1).toLowerCase();
   }
 
-  if (this.lastName) {
+  if (this.isModified("lastName") && this.lastName) {
     this.lastName = this.lastName.charAt(0).toUpperCase() + this.lastName.slice(1).toLowerCase();
   }
 
   next();
 });
-
-// Add an account to the accounts array
-UserSchema.methods.addAccount = function (accountId) {
-  if (!this.accounts.includes(accountId)) {
-    this.accounts.push(accountId);
-  }
-  return this.save();
-};
-
-// Remove an account from the accounts array
-UserSchema.methods.removeAccount = function (accountId) {
-  if (this.accounts.includes(accountId)) {
-    this.accounts.pull(accountId);
-  }
-  return this.save();
-};
-
-UserSchema.methods.getAllAccounts = async function () {
-  await this.populate({
-    path: "accounts",
-    match: { status: { $in: ["WaitingPurchase", "Live", "NeedUpgrade", "WaitingPayout", "PayoutRequestDone", "MoneySended"] } },
-    populate: {
-      path: "company",
-      model: "Company",
-    },
-  });
-  return this.accounts;
-};
-
-// Add an account to the accounts array
-UserSchema.methods.addCompany = function (companyId) {
-  if (!this.activeCompanies.includes(companyId)) {
-    this.activeCompanies.push(companyId);
-    return this.save();
-  }
-  return this;
-};
-
-// Remove an account from the accounts array
-UserSchema.methods.removeCompany = function (companyId) {
-  if (this.activeCompanies.includes(companyId)) {
-    this.activeCompanies.pull(companyId);
-    return this.save();
-  }
-  return this;
-};
-
-// Add profits to the user
-UserSchema.methods.addProfits = function (amount) {
-  this.profits += amount;
-  return this.save();
-};
-
-// Add roles
-UserSchema.methods.addLeaderRole = function () {
-  this.roles.leader = true;
-  this.save();
-};
-
-// Remove roles
-UserSchema.methods.removeLeaderRole = function () {
-  this.roles.leader = false;
-  this.save();
-};
-
-// Update note
-UserSchema.methods.updateNote = function (newNote) {
-  this.note = newNote.trim();
-  return this.save();
-};
-
-// Add a related user
-UserSchema.methods.addRelatedUser = function (relatedUserId) {
-  this.relatedUser = relatedUserId;
-  return this.save();
-};
-
-// Remove related user
-UserSchema.methods.removeRelatedUser = function () {
-  this.relatedUser = null;
-  return this.save();
-};
-
-// Add leader
-UserSchema.methods.addLeader = async function (leaderId) {
-  if (!this.leaders.includes(leaderId)) {
-    this.leaders.push(leaderId);
-    return this.save();
-  }
-  return this;
-};
-
-// Remove leader
-UserSchema.methods.removeLeader = async function (leaderId) {
-  if (this.leaders.includes(leaderId)) {
-    this.leaders.pull(leaderId);
-    return this.save();
-  }
-  return this;
-};
-
-// Check if is leader
-UserSchema.methods.isLeader = async function (leaderId) {
-  return this.leaders.includes(leaderId);
-};
 
 export default mongoose.models.User || mongoose.model("User", UserSchema);

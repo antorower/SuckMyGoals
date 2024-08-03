@@ -1,8 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { AddUserAccount } from "@/lib/UserActions";
-import { CreateNewAccount } from "@/lib/AccountActions";
 import CreateNewAccountForm from "@/components/User/Accounts/CreateNewAccountForm";
 import { GetAllCompanies } from "@/lib/CompanyActions";
 

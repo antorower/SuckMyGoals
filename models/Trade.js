@@ -26,6 +26,12 @@ const TradeSchema = new mongoose.Schema(
     closeDate: Date,
     stopLoss: Number,
     takeProfit: Number,
+    matched: Boolean,
+    metadata: {
+      category: Number,
+      relatedCapitals: [Number],
+      companyId: String,
+    },
   },
   { timestamps: true }
 );

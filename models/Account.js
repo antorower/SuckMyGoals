@@ -18,6 +18,7 @@ const AccountSchema = new mongoose.Schema(
       ref: "Company",
     },
     capital: Number,
+    relatedCapitals: [Number],
     phase: Number,
     balance: Number,
     cost: Number,
@@ -50,6 +51,8 @@ const AccountSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Trade",
     },
+    category: Number,
+    balanceCategory: Number,
     purchaseDate: Date,
     firstTradeDate: Date,
     targetReachedDate: Date,
@@ -62,31 +65,67 @@ const AccountSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-AccountSchema.pre("save", function (next) {
+AccountSchema.pre("save", async function (next) {
+  if (this.isModified("balance") || this.isNew) {
+    // Φέρνουμε την εταιρεία που συνδέεται με τον λογαριασμό
+    const company = await Company.findById(this.company);
+
+    if (!company) {
+      return next(new Error("Company not found"));
+    }
+
+    // Παίρνουμε τα δεδομένα για το τρέχον στάδιο
+    const phaseData = company[`phase${this.phase}`];
+
+    if (!phaseData) {
+      return next(new Error("Phase data not found"));
+    }
+
+    // Υπολογισμός στόχου και μέγιστης απώλειας
+    const targetBalance = (1 + phaseData.target / 100) * this.capital;
+    const drawdownBalance = (1 - phaseData.maxDrawdown / 100) * this.capital;
+    const targetDollars = (phaseData.target / 100) * this.capital;
+    const drawdownDollars = (phaseData.maxDrawdown / 100) * this.capital;
+
+    const step = (targetDollars + drawdownDollars) / 10;
+    // Create an array to hold the categories
+    const categories = [];
+
+    // Populate the array using a loop for steps 1 through 10
+    for (let i = 1; i <= 10; i++) {
+      categories.push(drawdownBalance + i * step);
+    }
+
+    for (let i = 0; i < categories.length - 1; i++) {
+      if (this.balance > categories[i] && this.balance <= categories[i + 1]) {
+        this.category = i + 1;
+        break;
+      }
+    }
+  }
+
+  if (this.isModified("capital") || this.isNew) {
+    if (this.capital === 5000 || this.capital === 6000) {
+      relatedCapitals = [5000, 6000];
+    }
+    if (this.capital === 10000 || this.capital === 15000) {
+      relatedCapitals = [10000, 15000];
+    }
+    if (this.capital === 20000 || this.capital === 25000) {
+      relatedCapitals = [20000, 25000];
+    }
+    if (this.capital === 50000 || this.capital === 60000) {
+      relatedCapitals = [50000, 60000];
+    }
+    if (this.capital === 100000) {
+      relatedCapitals = [100000];
+    }
+    if (this.capital === 200000) {
+      relatedCapitals = [200000];
+    }
+  }
   next();
 });
-
-// Send money for purchase
-AccountSchema.methods.sendMoneyForPurchase = async function (userId, companyId, capital, cost) {
-  this.user = userId;
-  this.company = companyId;
-  this.capital = capital;
-  this.phase = 1;
-  this.balance = capital;
-  this.cost = cost;
-  this.status = "WaitingPurchase";
-  this.note = "Funds has been sent to your wallet. Purchase your account and save your account number.";
-  return await this.save();
-};
-
-// Register account number after purchase
-AccountSchema.methods.registerAccountNumber = async function (newAccountNumber) {
-  this.number = newAccountNumber;
-  this.purchaseDate = new Date();
-  this.status = "Live";
-  this.note = "Your new account is ready for trading.";
-  return await this.save();
-};
 
 // Open trade
 AccountSchema.methods.openTrade = async function () {
@@ -160,28 +199,6 @@ AccountSchema.methods.updateBalance = async function (newBalance, canLose) {
     }
   }
   this.balance = newBalance;
-  return await this.save();
-};
-
-// Upgrade account
-AccountSchema.methods.upgradeAccount = async function (newAccountNumber) {
-  const newAccount = new this.constructor({
-    user: this.user,
-    number: newAccountNumber,
-    company: this.company,
-    capital: this.capital,
-    phase: this.phase + 1,
-    balance: this.capital,
-    status: "Live",
-    previousAccount: this._id,
-    note: "Your new account is ready for trading.",
-  });
-  await newAccount.save();
-
-  this.status = "UpgradeDone";
-  this.note = `Account successfully upgraded to ${newAccountNumber}`;
-  this.nextAccount = newAccount._id;
-  this.upgradedDate = new Date();
   return await this.save();
 };
 
