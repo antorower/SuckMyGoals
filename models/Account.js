@@ -7,18 +7,17 @@ const AccountSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+    company: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Company",
+    },
     number: {
       type: String,
       trim: true,
       unique: true,
       sparse: true,
     },
-    company: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Company",
-    },
     capital: Number,
-    relatedCapitals: [Number],
     phase: Number,
     balance: Number,
     cost: Number,
@@ -31,21 +30,19 @@ const AccountSchema = new mongoose.Schema(
       type: String,
       enum: ["WaitingPurchase", "Live", "NeedUpgrade", "UpgradeDone", "WaitingPayout", "PayoutRequestDone", "MoneySended", "Lost", "Review"],
     },
-    previousAccount: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Account",
-    },
-    nextAccount: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Account",
+    relatedAccount: {
+      previousAccount: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Account",
+      },
+      nextAccount: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Account",
+      },
     },
     note: {
       type: String,
       trim: true,
-    },
-    currentPayout: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Payout",
     },
     trades: {
       type: mongoose.Schema.Types.ObjectId,
