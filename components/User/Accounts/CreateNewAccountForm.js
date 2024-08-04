@@ -1,11 +1,11 @@
 "use client";
 import React, { useState } from "react";
-import { CreateNewAccount } from "@/lib/AccountActions";
+import { AccountInitialization } from "@/lib/AccountActions";
 import { AddAccountToUser } from "@/lib/UserActions";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
-const CreateNewAccountForm = ({ userId, companyId }) => {
+const CreateNewAccountForm = ({ userId, companyName }) => {
   const router = useRouter();
   const [capital, setCapital] = useState("");
   const [cost, setCost] = useState("");

@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import Payout from "./Payout";
 
 const AccountSchema = new mongoose.Schema(
   {
@@ -7,10 +6,7 @@ const AccountSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
-    company: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Company",
-    },
+    company: String,
     number: {
       type: String,
       trim: true,
@@ -20,62 +16,18 @@ const AccountSchema = new mongoose.Schema(
     capital: Number,
     phase: Number,
     balance: Number,
-    cost: Number,
-    unorthodoxBreach: Boolean,
-    timesPaid: {
-      type: Number,
-      default: 0,
-    },
     status: {
       type: String,
       enum: ["WaitingPurchase", "Live", "NeedUpgrade", "UpgradeDone", "WaitingPayout", "PayoutRequestDone", "MoneySended", "Lost", "Review"],
-    },
-    relatedAccount: {
-      previousAccount: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Account",
-      },
-      nextAccount: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Account",
-      },
     },
     note: {
       type: String,
       trim: true,
     },
-    trades: {
+    openTrade: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Trade",
     },
-    openTrade: {
-      tradeId: String,
-      pair: String,
-      lots: Number,
-      position: {
-        type: String,
-        enum: ["Buy", "Sell"],
-      },
-      stopLoss: Number,
-      takeProfit: Number,
-      openTime: Date,
-      result: {
-        type: String,
-        enum: ["Win", "Lose", "None"],
-        default: "None",
-      },
-    },
-    reviewTrade: {
-      trade: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Trade",
-      },
-      reason: {
-        type: String,
-        enum: ["Wrong result", "Large Profit", "Large Loss"],
-      },
-    },
-    balanceCategory: Number,
     eventsTimestamp: {
       purchaseDate: Date,
       firstTradeDate: Date,
@@ -85,6 +37,23 @@ const AccountSchema = new mongoose.Schema(
       payoutRequestDoneDate: Date,
       profitsSended: Date,
       lostDate: Date,
+    },
+    metadata: {
+      timesPaid: {
+        type: Number,
+        default: 0,
+      },
+      balanceCategory: Number,
+      relatedAccounts: {
+        previousAccount: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Account",
+        },
+        nextAccount: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Account",
+        },
+      },
     },
   },
   { timestamps: true }
@@ -151,6 +120,22 @@ AccountSchema.pre("save", async function (next) {
   }
   next();
 });
+
+AccountSchema.methods.accountInitialization = async function (userId, companyName, capital) {
+  this.user = userId;
+  this.company = companyName;
+  this.capital = capital;
+  this.phase = 1;
+  this.balance = capital;
+  this.status = "WaitingPurchase";
+  this.note = `Funds has been sent to your wallet. Purchase your ${companyName} account of $${capital.toLocaleString('de-DE')} and save your account number`;
+  // balance category
+  await this.save();
+
+  await this.populate("user");
+  
+
+};
 
 // Update balance
 AccountSchema.methods.updateBalance = async function (newBalance, canLose) {

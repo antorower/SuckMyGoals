@@ -1,8 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
 import { toast } from "react-toastify";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { AddRelatedUser } from "@/lib/UserActions";
 import { RemoveRelatedUser } from "@/lib/UserActions";

@@ -1,57 +1,58 @@
 import React from "react";
 import PlusButton from "@/components/General/PlusButton";
-import { GetAllUserAccounts } from "@/lib/UserActions";
 import WaitingPurchaseAccountCard from "./WaitingPurchaseAccountCard";
 import LiveAccountCard from "./LiveAccountCard";
 import NeedUpgradeCard from "./NeedUpgradeCard";
+import Link from "next/link";
 
-const Accounts = async ({ userId, admin, owner }) => {
-  const allAccounts = await GetAllUserAccounts(userId);
+const Accounts = async ({ accounts, selectedAccounts, userId, admin, owner }) => {
+    const allAccounts = accounts || [];
 
-  let waitingPurchaseAccounts;
-  let liveAccounts;
-  let needUpgradeAccounts;
-  let waitingPayoutAccounts;
-  let payoutRequestDoneAccounts;
-  let moneySendedAccounts;
+     const waitingPurchaseAccounts = allAccounts.filter((account) => account.status === "WaitingPurchase");
+     const liveAccounts = allAccounts.filter((account) => account.status === "Live");
+     const  needUpgradeAccounts = allAccounts.filter((account) => account.status === "NeedUpgrade");
+     const  waitingPayoutAccounts = allAccounts.filter((account) => account.status === "WaitingPayout" || account.status === "PayoutRequestDone");
 
-  if (allAccounts && allAccounts.length > 0) {
-    waitingPurchaseAccounts = allAccounts.filter((account) => account.status === "WaitingPurchase");
-    liveAccounts = allAccounts.filter((account) => account.status === "Live");
-    needUpgradeAccounts = allAccounts.filter((account) => account.status === "NeedUpgrade");
-    waitingPayoutAccounts = allAccounts.filter((account) => account.status === "WaitingPayout");
-    payoutRequestDoneAccounts = allAccounts.filter((account) => account.status === "PayoutRequestDone");
-    moneySendedAccounts = allAccounts.filter((account) => account.status === "MoneySended");
-  }
+   if(!selectedAccounts) { 
+    return <div className="flex flex-wrap justify-center items-center gap-8">
+    <Link className="border border-gray-800 rounded px-4 py-2" href={`/user?user=${userId}&accounts=waitingpurchaseaccounts`}>Purchase Accounts ({waitingPurchaseAccounts.length})</Link>
+    <Link className="border border-gray-800 rounded px-4 py-2" href={`/user?user=${userId}&accounts=liveaccounts`}> Live Accounts ({liveAccounts.length})</Link>
+    <Link className="border border-gray-800 rounded px-4 py-2" href={`/user?user=${userId}&accounts=needupgradeaccounts`}>Upgrade Accounts ({needUpgradeAccounts.length})</Link>
+    <Link className="border border-gray-800 rounded px-4 py-2" href={`/user?user=${userId}&accounts=waitingpayoutaccounts`}>Waiting Payout Accounts ({waitingPayoutAccounts.length})</Link>        
+   </div>;
+   }
 
-  return (
-    <div className="flex flex-col gap-4">
-      {waitingPurchaseAccounts && waitingPurchaseAccounts.length > 0 && (
-        <div className="flex flex-wrap justify-center gap-4 px-4">
-          {waitingPurchaseAccounts.map((account) => (
-            <WaitingPurchaseAccountCard account={account} key={account._id.toString()} admin={admin} owner={owner} />
-          ))}
-        </div>
-      )}
+   if(selectedAccounts==="waitingpurchaseaccounts") {
+    return  <>{waitingPurchaseAccounts && waitingPurchaseAccounts.length > 0 ?  <div className="flex flex-wrap justify-center gap-4 px-4">
+      {waitingPurchaseAccounts.map((account) => (
+        <WaitingPurchaseAccountCard account={account} key={account._id.toString()} admin={admin} owner={owner} />
+      ))}
+    </div> : <div className="flex justify-center items-center p-4 animate-pulse">There are no account for purchase</div>}</>
+   };
 
-      {liveAccounts && liveAccounts.length > 0 && (
-        <div className="flex flex-wrap justify-center gap-4 px-4">
-          {liveAccounts.map((account) => (
-            <LiveAccountCard account={account} key={account._id.toString()} admin={admin} owner={owner} />
-          ))}
-        </div>
-      )}
+   if(selectedAccounts==="liveaccounts") {
+    return  <>{liveAccounts && liveAccounts.length > 0 ?  <div className="flex flex-wrap justify-center gap-4 px-4">
+      {liveAccounts.map((account) => (
+        <LiveAccountCard account={account} key={account._id.toString()} admin={admin} owner={owner} />
+      ))}
+    </div> : <div className="flex justify-center items-center p-4 animate-pulse">There are no live accounts</div>}</>
+   };
 
-      {needUpgradeAccounts && needUpgradeAccounts.length > 0 && (
-        <div className="flex flex-wrap justify-center gap-4 px-4">
-          {needUpgradeAccounts.map((account) => (
-            <NeedUpgradeCard account={account} key={account._id.toString()} admin={admin} owner={owner} />
-          ))}
-        </div>
-      )}
-      {admin && <PlusButton link={`/accounts/add?user=${userId}`} />}
-    </div>
-  );
+   if(selectedAccounts==="needupgradeaccounts") {
+    return  <>{needUpgradeAccounts && needUpgradeAccounts.length > 0 ?  <div className="flex flex-wrap justify-center gap-4 px-4">
+      {needUpgradeAccounts.map((account) => (
+        <NeedUpgradeCard account={account} key={account._id.toString()} admin={admin} owner={owner} />
+      ))}
+    </div> : <div className="flex justify-center items-center p-4 animate-pulse">There are no accounts for upgrade</div>}</>
+   };
+
+   if(selectedAccounts==="waitingpayoutaccounts") {
+    return  <>{waitingPayoutAccounts && waitingPayoutAccounts.length > 0 ?  <div className="flex flex-wrap justify-center gap-4 px-4">
+      {waitingPayoutAccounts.map((account) => (
+        <NeedUpgradeCard account={account} key={account._id.toString()} admin={admin} owner={owner} />
+      ))}
+    </div> : <div className="flex justify-center items-center p-4 animate-pulse">There are no accounts waiting for payout</div>}</>
+   };
 };
 
 export default Accounts;

@@ -13,13 +13,7 @@ const UserSchema = new mongoose.Schema({
       default: [],
     },
   ],
-  activeCompanies: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Company",
-      default: [],
-    },
-  ],
+  activeCompanies: [String],
   roles: {
     owner: {
       type: Boolean,

@@ -45,6 +45,7 @@ const TradeSchema = new mongoose.Schema(
 export default mongoose.models.Trade || mongoose.model("Trade", TradeSchema);
 
 TradeSchema.methods.OpenTrade = async function (userId, accountId, openBalance, pair, position, lots, stopLoss, takeProfit, matched) {
+  await this.populate("account");
   this.user = userId;
   this.account = accountId;
   this.trade.openBalance = openBalance;
