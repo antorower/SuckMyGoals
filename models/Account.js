@@ -51,16 +51,44 @@ const AccountSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Trade",
     },
-    category: Number,
+    openTrade: {
+      tradeId: String,
+      pair: String,
+      lots: Number,
+      position: {
+        type: String,
+        enum: ["Buy", "Sell"],
+      },
+      stopLoss: Number,
+      takeProfit: Number,
+      openTime: Date,
+      result: {
+        type: String,
+        enum: ["Win", "Lose", "None"],
+        default: "None",
+      },
+    },
+    reviewTrade: {
+      trade: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Trade",
+      },
+      reason: {
+        type: String,
+        enum: ["Wrong result", "Large Profit", "Large Loss"],
+      },
+    },
     balanceCategory: Number,
-    purchaseDate: Date,
-    firstTradeDate: Date,
-    targetReachedDate: Date,
-    upgradedDate: Date,
-    payoutRequestDate: Date,
-    payoutRequestDoneDate: Date,
-    profitsSended: Date,
-    lostDate: Date,
+    eventsTimestamp: {
+      purchaseDate: Date,
+      firstTradeDate: Date,
+      targetReachedDate: Date,
+      upgradedDate: Date,
+      payoutRequestDate: Date,
+      payoutRequestDoneDate: Date,
+      profitsSended: Date,
+      lostDate: Date,
+    },
   },
   { timestamps: true }
 );
@@ -98,7 +126,7 @@ AccountSchema.pre("save", async function (next) {
 
     for (let i = 0; i < categories.length - 1; i++) {
       if (this.balance > categories[i] && this.balance <= categories[i + 1]) {
-        this.category = i + 1;
+        this.balanceCategory = i + 1;
         break;
       }
     }
@@ -126,11 +154,6 @@ AccountSchema.pre("save", async function (next) {
   }
   next();
 });
-
-// Open trade
-AccountSchema.methods.openTrade = async function () {
-  // Waiting for development
-};
 
 // Update balance
 AccountSchema.methods.updateBalance = async function (newBalance, canLose) {
@@ -199,81 +222,6 @@ AccountSchema.methods.updateBalance = async function (newBalance, canLose) {
     }
   }
   this.balance = newBalance;
-  return await this.save();
-};
-
-// Initialize upgraded account
-AccountSchema.methods.initializeUpgradedAccount = async function (oldAccountObj, newAccountNumber) {
-  this.user = oldAccountObj.user;
-  this.number = newAccountNumber;
-  this.company = oldAccountObj.company;
-  this.capital = oldAccountObj.capital;
-  this.phase = oldAccountObj.phase + 1;
-  this.balance = this.capital;
-  this.status = "Live";
-  this.previousAccount = oldAccountObj._id;
-  this.note = "Account is ready for trading";
-  return await this.save();
-};
-
-// Payout request done
-AccountSchema.methods.payoutRequestDone = async function () {
-  this.status = "PayoutRequestDone";
-  this.payoutRequestDoneDate = new Date();
-  return await this.save();
-};
-
-// Send profits
-AccountSchema.methods.sendProfits = async function (payoutAmount, userProfit) {
-  const mentorsPercent = 0.15; //InputVariable
-  const newPayout = new Payout({
-    user: this.user,
-    account: this._id,
-    accountProfit: this.balance - this.capital,
-    payoutAmount: payoutAmount,
-    userProfit: userProfit,
-    mentorsProfit: payoutAmount * mentorsPercent,
-    netProfit: payoutAmount - userProfit - payoutAmount * mentorsPercent,
-  });
-  await newPayout.save();
-
-  this.currentPayout = newPayout._id;
-  this.status = "MoneySended";
-  this.note = "Profits sended. Please wait for reset.";
-  return await this.save();
-};
-
-// Accept profits
-AccountSchema.methods.acceptProfits = async function (payoutAmount, userProfit, mentorsProfit) {
-  await this.populate("currentPayout");
-  if (!this.currentPayout) {
-    throw new Error("Error accept profits. No associated payout found.");
-  }
-  this.currentPayout.acceptedDate = new Date();
-  this.currentPayout.status = "Accepted";
-  this.currentPayout.accountProfit = this.balance - this.capital;
-  this.currentPayout.payoutAmount = payoutAmount;
-  this.currentPayout.userProfit = userProfit;
-  this.currentPayout.netProfit = payoutAmount - userProfit - mentorsProfit;
-  await this.currentPayout.save();
-
-  this.balance = this.capital;
-  this.status = "Live";
-  this.note = "Your account is ready for trading.";
-  this.currentPayout = null;
-  this.timesPaid = this.timesPaid + 1;
-  return await this.save();
-};
-
-// Review pass
-AccountSchema.methods.reviewPass = async function () {
-  this.status = "Lost";
-  return await this.save();
-};
-
-// Update note
-AccountSchema.methods.updateNote = async function (note) {
-  this.note = note;
   return await this.save();
 };
 

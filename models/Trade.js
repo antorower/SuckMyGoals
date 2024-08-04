@@ -20,17 +20,29 @@ const TradeSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Open", "Close"],
+      enum: ["Open", "Close", "Review"],
       default: "Open",
+    },
+    reviewData: {
+      name: String,
+      details: String,
     },
     closeDate: Date,
     stopLoss: Number,
     takeProfit: Number,
     matched: Boolean,
+    openTime: {
+      type: Date,
+      default: () => Date.now(),
+    },
+    matchTime: Date,
+    closeTime: Date,
     metadata: {
       category: Number,
       relatedCapitals: [Number],
       companyId: String,
+      companyName: String,
+      order: Number,
     },
   },
   { timestamps: true }
