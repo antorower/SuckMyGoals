@@ -17,7 +17,6 @@ const TradeSection = ({ openTradeExist, accountId }) => {
     }
   };
 
-  console.log(isThereOpenTrade);
   return (
     <>
       {isThereOpenTrade ? (

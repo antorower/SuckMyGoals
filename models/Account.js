@@ -1,4 +1,7 @@
 import mongoose from "mongoose";
+import { Companies } from "@/lib/AppData";
+import Payout from "./Payout";
+import User from "./User";
 
 const AccountSchema = new mongoose.Schema(
   {
@@ -15,28 +18,37 @@ const AccountSchema = new mongoose.Schema(
     },
     capital: Number,
     phase: Number,
+    phaseWeight: Number,
     balance: Number,
+    activities: [
+      {
+        title: String,
+        description: String,
+        dateTime: Date,
+      },
+    ],
     status: {
       type: String,
       enum: ["WaitingPurchase", "Live", "NeedUpgrade", "UpgradeDone", "WaitingPayout", "PayoutRequestDone", "MoneySended", "Lost", "Review"],
     },
+    instructions: String,
     note: {
       type: String,
       trim: true,
     },
-    openTrade: {
+    lastTrade: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Trade",
     },
     eventsTimestamp: {
+      targetReachedDate: Date,
+      lostDate: Date,
       purchaseDate: Date,
       firstTradeDate: Date,
-      targetReachedDate: Date,
       upgradedDate: Date,
       payoutRequestDate: Date,
       payoutRequestDoneDate: Date,
-      profitsSended: Date,
-      lostDate: Date,
+      profitsSendedDate: Date,
     },
     metadata: {
       timesPaid: {
@@ -61,150 +73,176 @@ const AccountSchema = new mongoose.Schema(
 
 AccountSchema.pre("save", async function (next) {
   if (this.isModified("balance") || this.isNew) {
-    // Φέρνουμε την εταιρεία που συνδέεται με τον λογαριασμό
-    const company = await Company.findById(this.company);
+    const company = GetCompany(this.company);
+    const phase = company.phases[this.phase];
 
-    if (!company) {
-      return next(new Error("Company not found"));
-    }
+    const targetBalance = (1 + phase.target / 100) * this.capital;
+    const drawdownBalance = (1 - phase.maxDrawdown / 100) * this.capital;
+    const targetDollars = (phase.target / 100) * this.capital;
+    const drawdownDollars = (phase.maxDrawdown / 100) * this.capital;
 
-    // Παίρνουμε τα δεδομένα για το τρέχον στάδιο
-    const phaseData = company[`phase${this.phase}`];
-
-    if (!phaseData) {
-      return next(new Error("Phase data not found"));
-    }
-
-    // Υπολογισμός στόχου και μέγιστης απώλειας
-    const targetBalance = (1 + phaseData.target / 100) * this.capital;
-    const drawdownBalance = (1 - phaseData.maxDrawdown / 100) * this.capital;
-    const targetDollars = (phaseData.target / 100) * this.capital;
-    const drawdownDollars = (phaseData.maxDrawdown / 100) * this.capital;
-
+    // Κάθε φορά που αλλάζει το balance ενημερώνεται η κατηγορία του account
     const step = (targetDollars + drawdownDollars) / 10;
-    // Create an array to hold the categories
     const categories = [];
-
-    // Populate the array using a loop for steps 1 through 10
     for (let i = 1; i <= 10; i++) {
       categories.push(drawdownBalance + i * step);
     }
-
     for (let i = 0; i < categories.length - 1; i++) {
       if (this.balance > categories[i] && this.balance <= categories[i + 1]) {
-        this.balanceCategory = i + 1;
+        this.metadata.balanceCategory = i + 1;
         break;
       }
     }
+
+    // Κάθε φορά που αλλάζει το balance ελέγχεται αν το account πρέπει να αλλάξει status
+    if (this.balance > targetBalance) {
+      this.targetReached();
+    }
+    if (this.balance < drawdownBalance) {
+      this.accountLost();
+    }
   }
 
-  if (this.isModified("capital") || this.isNew) {
-    if (this.capital === 5000 || this.capital === 6000) {
-      relatedCapitals = [5000, 6000];
-    }
-    if (this.capital === 10000 || this.capital === 15000) {
-      relatedCapitals = [10000, 15000];
-    }
-    if (this.capital === 20000 || this.capital === 25000) {
-      relatedCapitals = [20000, 25000];
-    }
-    if (this.capital === 50000 || this.capital === 60000) {
-      relatedCapitals = [50000, 60000];
-    }
-    if (this.capital === 100000) {
-      relatedCapitals = [100000];
-    }
-    if (this.capital === 200000) {
-      relatedCapitals = [200000];
-    }
+  if (this.isModified("phase") || this.isNew) {
+    const company = GetCompany(this.company);
+    this.instructions = company.phases[this.phase].instructions;
+    this.phaseWeight = company.phases[this.phase].weight;
   }
   next();
 });
 
+// DONE
 AccountSchema.methods.accountInitialization = async function (userId, companyName, capital) {
+  const company = GetCompany(companyName);
   this.user = userId;
   this.company = companyName;
   this.capital = capital;
-  this.phase = 1;
+  this.phase = 0;
+  this.phaseWeight = company.phases[0].weight;
   this.balance = capital;
   this.status = "WaitingPurchase";
-  this.note = `Funds has been sent to your wallet. Purchase your ${companyName} account of $${capital.toLocaleString('de-DE')} and save your account number`;
-  // balance category
+  this.note = `Funds has been sent to your wallet. Purchase your ${companyName} account of $${capital.toLocaleString("de-DE")} and save your account number`;
+  this.addActivity("Funds sent", "Funds send for buying new account");
   await this.save();
 
   await this.populate("user");
-  
-
+  await this.user.addAccount(this._id);
+  return;
 };
 
-// Update balance
-AccountSchema.methods.updateBalance = async function (newBalance, canLose) {
-  await this.populate("company");
-  if (!this.company) {
-    throw new Error("Error updating balance. No associated company found for the account.");
-  }
-  const phaseString = `phase${this.phase}`;
+AccountSchema.methods.createUpgradedAccount = async function (oldAccount, newNumber) {
+  this.user = oldAccount.user;
+  await this.save();
 
-  // Υπολογίζω τα dd και το target
-  const balanceTarget = this.capital + this.capital * this.company[phaseString].target;
-  let balanceDailyDrawdown;
-  if (this.company.drawdownType === "initialBalance") {
-    balanceDailyDrawdown = this.capital - this.capital * this.company[phaseString].dailyDrawdown;
+  await this.populate("user");
+  await this.user.addAccount(this._id);
+
+  this.company = oldAccount.company;
+  this.number = newNumber;
+  this.capital = oldAccount.capital;
+  this.phase = oldAccount.phase + 1;
+  this.balance = oldAccount.capital;
+  this.status = "Live";
+  this.note = `Your upgraded account ${newNumber} is ready for trading`;
+  this.metadata.relatedAccounts.oldAccount = oldAccount._id;
+  this.addActivity("Upgraded account created", "Upgraded account created");
+  return;
+};
+
+// DONE
+AccountSchema.methods.accountPurchased = async function (number) {
+  this.number = number;
+  this.status = "Live";
+  this.eventsTimestamp.purchaseDate = new Date();
+  this.note = "Your account is ready for trading";
+  this.addActivity("Account purchased", "The user purchase the account and set the account number");
+  await this.save();
+  return;
+};
+
+AccountSchema.methods.upgradeAccount = async function (nextAccountId) {
+  await this.popuplate("user");
+  await this.user.removeAccount(this._id);
+  this.eventsTimestamp.upgradedDate = new Date();
+  this.status = "UpgradeDone";
+  this.note = "Account has been upgraded";
+  this.addActivity("Account upgraded", "Account has been upgraded");
+  this.metadata.relatedAccounts.nextAccount = nextAccountId;
+  await this.save();
+  return;
+};
+
+AccountSchema.methods.targetReached = function () {
+  const company = GetCompany(this.company);
+  if (company.phases.length === this.phase + 1) {
+    this.status = "WaitingPayout";
+    this.addActivity("Profits gained", "A funded account gain profits");
   } else {
-    balanceDailyDrawdown = this.balance - this.balance * this.company[phaseString].dailyDrawdown;
+    this.status = "NeedUpgrade";
+    this.addActivity("Phase passed", "The account reach the target");
   }
-  const balanceMaxDrawdown = this.capital - this.capital * this.company[phaseString].maxDrawdown;
-  const balanceOneTradeDrawdown = this.balance - this.balance * this.company[phaseString].oneTradeRisk;
+  this.eventsTimestamp.targetReachedDate = new Date();
+};
 
-  // Ελέγχω αν έχει ξεπεράσει το μέγιστο επιτρεπόμενο ρίσκο σε ένα trade
-  if (canLose) {
-    if (this.company.oneTradeLose) {
-      if (newBalance < balanceOneTradeDrawdown) {
-        this.status = "Review";
-        this.lostDate = new Date();
-        this.unorthodoxBreach = true;
-        this.note = "Account lost because exceeded the one trade allowed drawdown";
-        this.balance = newBalance;
-        return await this.save();
-      }
-    }
+AccountSchema.methods.accountLost = function () {
+  this.status = "Review";
+  this.addActivity("Account lost", "Account lost");
+  this.eventsTimestamp.lostDate = new Date();
+};
 
-    if (newBalance < balanceDailyDrawdown) {
-      this.status = "Review";
-      this.lostDate = new Date();
-      this.unorthodoxBreach = true;
-      this.note = "Account lost because exceeded the maximum daily drawdown";
-      this.balance = newBalance;
-      return await this.save();
-    }
-  }
-
-  // Ελέγχω αν έχει ξεπεράσει το max drawdown
-  if (newBalance < balanceMaxDrawdown) {
-    this.status = "Review";
-    this.lostDate = new Date();
-    this.note = "Account lost because exceeded the maximum drawdown";
-    this.balance = newBalance;
-    return await this.save();
-  }
-
-  if (newBalance > balanceTarget) {
-    if (this.phase === 1 || this.phase === 2) {
-      this.status = "NeedUpgrade";
-      this.targetReachedDate = new Date();
-      this.note = "Target reached. Complete the minimum trading or waiting days to upgrade your account.";
-      this.balance = newBalance;
-      return await this.save();
-    } else if (this.phase === 3) {
-      this.status = "WaitingPayout";
-      this.targetReachedDate = new Date();
-      this.note = "Target reached. Complete the minimum trading or waiting days for payout request.";
-      this.balance = newBalance;
-      return await this.save();
-    }
-  }
+AccountSchema.methods.updateBalance = async function (newBalance) {
+  this.addActivity("Balance updated", `Balance updated from ${this.balance} to ${newBalance}`);
   this.balance = newBalance;
-  return await this.save();
+  await this.save();
+  return;
+};
+
+AccountSchema.methods.reviewFinished = async function () {
+  this.status = "Lost";
+  this.addActivity("Review finished", "Review finished");
+  await this.save();
+  return;
+};
+
+AccountSchema.methods.payoutRequestDone = async function () {
+  this.status = "PayoutRequestDone";
+  this.addActivity("Payout request done", "Payout request done");
+  await this.save();
+  return;
+};
+
+AccountSchema.methods.resetAfterPayoutSended = async function () {
+  this.balance = this.capital;
+  this.status = "Live";
+  this.note = "Your account is ready for trading. Happy profits again!";
+  this.eventsTimestamp.payoutRequestDate = null;
+  this.eventsTimestamp.payoutRequestDoneDate = null;
+  this.eventsTimestamp.profitsSendedDate = null;
+  this.addActivity("Payout accepted", "Payout accepted and account is reseted");
+  await this.save();
+  return;
+};
+
+AccountSchema.methods.moneySended = async function (payoutAmount) {
+  this.status = "PayoutRequestDone";
+  this.addActivity("Payout request done", "Payout request done");
+  await this.save();
+  return;
+};
+
+AccountSchema.methods.addActivity = function ({ title, description }) {
+  const newActivity = {
+    title: title,
+    description: description,
+    dateTime: new Date(),
+  };
+  this.activities.push(newActivity);
+};
+
+const GetCompany = (name) => {
+  const company = Companies.find((company) => company.name === name);
+  if (!company) throw new Error("Company not found. Account Model -> GetCompany");
+  return company;
 };
 
 export default mongoose.models.Account || mongoose.model("Account", AccountSchema);

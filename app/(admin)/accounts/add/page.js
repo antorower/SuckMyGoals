@@ -2,29 +2,29 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import CreateNewAccountForm from "@/components/User/Accounts/CreateNewAccountForm";
-import { Companies } from "@/lib/AppData";
+import { GetUserActiveCompanies } from "@/lib/UserActions";
 
 const Accounts = async ({ searchParams }) => {
-  const allCompanies = Companies || [];
-  
   const userId = searchParams.user;
   if (!userId) notFound();
-  
-  const urlCompanyName = searchParams.company;  
-  const selectedCompany = allCompanies.find(company => company.name === urlCompanyName);
+
+  const allActiveCompanies = await GetUserActiveCompanies(userId);
+
+  const urlCompanyName = searchParams.company;
+  const selectedCompany = allActiveCompanies.find((company) => company === urlCompanyName);
 
   return (
     <div className="flex gap-4 items-center justify-center flex-grow h-full p-4">
-      {selectedCompany && <CreateNewAccountForm userId={userId} companyName={selectedCompany.name} />}
+      {selectedCompany && <CreateNewAccountForm userId={userId} companyName={selectedCompany} />}
       {!selectedCompany &&
-        allCompanies &&
-        allCompanies.length > 0 &&
-        allCompanies.map((company) => (
-          <Link className="flex items-center gap-2 py-2 px-4 border border-gray-800" key={company.name} href={`/accounts/add?user=${userId}&company=${company.name}`}>
+        allActiveCompanies &&
+        allActiveCompanies.length > 0 &&
+        allActiveCompanies.map((company) => (
+          <Link className="flex items-center gap-2 py-2 px-4 border border-gray-800" key={company} href={`/accounts/add?user=${userId}&company=${company}`}>
             <div>
               <Image src="/plus.svg" width={13} height={13} alt="plus-icon" />
             </div>
-            <div>{company.name}</div>
+            <div>{company}</div>
           </Link>
         ))}
     </div>

@@ -1,19 +1,19 @@
 "use client";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { AddUserCompany } from "@/lib/UserActions";
-import { RemoveUserCompany } from "@/lib/UserActions";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { ActivateCompany } from "@/lib/UserActions";
+import { DeactivateCompany } from "@/lib/UserActions";
 
-const UserCompanyActivation = ({ state, companyId, userId }) => {
+const UserCompanyActivation = ({ state, companyName, userId }) => {
   const [isCompanyActive, setIsCompanyActive] = useState(state);
   const router = useRouter();
 
   const AddCompany = async () => {
     const currentState = isCompanyActive;
     setIsCompanyActive(!currentState);
-    const response = await AddUserCompany(userId, companyId);
+    const response = await ActivateCompany(userId, companyName);
     if (response.error) {
       setIsCompanyActive(currentState);
       toast.error(response.message);
@@ -26,7 +26,7 @@ const UserCompanyActivation = ({ state, companyId, userId }) => {
   const RemoveCompany = async () => {
     const currentState = isCompanyActive;
     setIsCompanyActive(!currentState);
-    const response = await RemoveUserCompany(userId, companyId);
+    const response = await DeactivateCompany(userId, companyName);
     if (response.error) {
       setIsCompanyActive(currentState);
       toast.error(response.message);
