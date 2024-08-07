@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { Companies } from "@/lib/AppData";
+import { Companies, Strategy, Pairs } from "@/lib/AppData";
 import Payout from "./Payout";
 import User from "./User";
 
@@ -24,14 +24,13 @@ const AccountSchema = new mongoose.Schema(
       {
         title: String,
         description: String,
-        dateTime: Date,
+        dateTime: { type: Date, default: () => new Date() },
       },
     ],
     status: {
       type: String,
       enum: ["WaitingPurchase", "Live", "NeedUpgrade", "UpgradeDone", "WaitingPayout", "PayoutRequestDone", "MoneySended", "Lost", "Review"],
     },
-    instructions: String,
     note: {
       type: String,
       trim: true,
@@ -130,12 +129,9 @@ AccountSchema.methods.accountInitialization = async function (userId, companyNam
   return;
 };
 
+// DONE
 AccountSchema.methods.createUpgradedAccount = async function (oldAccount, newNumber) {
   this.user = oldAccount.user;
-  await this.save();
-
-  await this.populate("user");
-  await this.user.addAccount(this._id);
 
   this.company = oldAccount.company;
   this.number = newNumber;
@@ -144,8 +140,25 @@ AccountSchema.methods.createUpgradedAccount = async function (oldAccount, newNum
   this.balance = oldAccount.capital;
   this.status = "Live";
   this.note = `Your upgraded account ${newNumber} is ready for trading`;
-  this.metadata.relatedAccounts.oldAccount = oldAccount._id;
+  this.metadata.relatedAccounts.previousAccount = oldAccount._id;
   this.addActivity("Upgraded account created", "Upgraded account created");
+  await this.save();
+
+  await this.populate("user");
+  await this.user.addAccount(this._id);
+  return;
+};
+
+// DONE
+AccountSchema.methods.upgradeAccount = async function (nextAccountId) {
+  await this.populate("user");
+  await this.user.removeAccount(this._id);
+  this.eventsTimestamp.upgradedDate = new Date();
+  this.status = "UpgradeDone";
+  this.note = "Account has been upgraded";
+  this.addActivity("Account upgraded", "Account has been upgraded");
+  this.metadata.relatedAccounts.nextAccount = nextAccountId;
+  await this.save();
   return;
 };
 
@@ -160,18 +173,7 @@ AccountSchema.methods.accountPurchased = async function (number) {
   return;
 };
 
-AccountSchema.methods.upgradeAccount = async function (nextAccountId) {
-  await this.popuplate("user");
-  await this.user.removeAccount(this._id);
-  this.eventsTimestamp.upgradedDate = new Date();
-  this.status = "UpgradeDone";
-  this.note = "Account has been upgraded";
-  this.addActivity("Account upgraded", "Account has been upgraded");
-  this.metadata.relatedAccounts.nextAccount = nextAccountId;
-  await this.save();
-  return;
-};
-
+// DONE
 AccountSchema.methods.targetReached = function () {
   const company = GetCompany(this.company);
   if (company.phases.length === this.phase + 1) {
@@ -184,10 +186,39 @@ AccountSchema.methods.targetReached = function () {
   this.eventsTimestamp.targetReachedDate = new Date();
 };
 
+// DONE
 AccountSchema.methods.accountLost = function () {
   this.status = "Review";
   this.addActivity("Account lost", "Account lost");
   this.eventsTimestamp.lostDate = new Date();
+};
+
+// DONE
+AccountSchema.methods.getStopLoss = function () {
+  const company = Companies.find((company) => company.name === this.company);
+  const maxRiskPerTradePercentage = company.phases[account.phase].maxRiskPerTrade;
+  const randomFactor = Math.random() * (1 - Strategy.tradesRandomFactor) + Strategy.tradesRandomFactor;
+  const stopLoss = Math.round(maxRiskPerTradePercentage * this.capital * randomFactor);
+  return stopLoss;
+};
+// DONE
+AccountSchema.methods.getTakeProfit = function (stopLoss, pair, lots) {
+  const pairObj = Pairs.find((pairItem) => pairItem.pair === pair);
+  const companyObj = Companies.find((company) => company.name === this.company);
+
+  const maxTakeProfit = stopLoss * Strategy.maxRiskToRewardRatio;
+  const company = Companies.find((company) => company.name === this.company);
+  const phaseDetails = company.phases[account.phase];
+  const targetBalance = this.capital * (1 + phaseDetails.target);
+  const remainingBalance = targetBalance - this.balance;
+  const randomFactor = Math.random() * (1 - Strategy.tradesRandomFactor) + Strategy.tradesRandomFactor;
+  let takeProfit;
+  if (remainingBalance < maxTakeProfit) {
+    takeProfit = remainingBalance + pairObj.spread * lots + companyObj.commissionFactor * lots + Strategy.extraTakeProfitPoints * lots;
+  } else {
+    takeProfit = maxTakeProfit * randomFactor;
+  }
+  return takeProfit;
 };
 
 AccountSchema.methods.updateBalance = async function (newBalance) {
@@ -230,19 +261,20 @@ AccountSchema.methods.moneySended = async function (payoutAmount) {
   return;
 };
 
-AccountSchema.methods.addActivity = function ({ title, description }) {
-  const newActivity = {
+// DONE
+AccountSchema.methods.addActivity = function (title, description) {
+  this.activities.push({
     title: title,
     description: description,
-    dateTime: new Date(),
-  };
-  this.activities.push(newActivity);
+  });
 };
 
 const GetCompany = (name) => {
   const company = Companies.find((company) => company.name === name);
-  if (!company) throw new Error("Company not found. Account Model -> GetCompany");
+  if (!company) throw new Error(`Company ${name} not found. Account Model -> GetCompany`);
   return company;
 };
+
+AccountSchema.methods.openTrade = async function () {};
 
 export default mongoose.models.Account || mongoose.model("Account", AccountSchema);

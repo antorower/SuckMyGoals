@@ -23,7 +23,7 @@ const UserNote = ({ userId, note }) => {
 
   return (
     <div className="flex flex-col gap-2 border-y border-gray-800  p-4">
-      <button onClick={() => setIsExpanded(!isExpanded)} className="flex justify-center w-full animate-pulse text-gray-400">
+      <button onClick={() => setIsExpanded(!isExpanded)} className="flex justify-center w-full text-gray-400">
         {note} (click to update)
       </button>
       {isExpanded && (

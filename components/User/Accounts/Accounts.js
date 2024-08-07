@@ -30,6 +30,10 @@ const Accounts = async ({ accounts, selectedAccounts, userId, admin, owner }) =>
     </div>
   );
 
+  if (!selectedAccounts) {
+    return menu;
+  }
+
   if (selectedAccounts === "waitingpurchaseaccounts") {
     return (
       <>

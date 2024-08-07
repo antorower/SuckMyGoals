@@ -23,10 +23,10 @@ const NewAccountNumberForm = ({ oldAccountId }) => {
   };
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 max-w-[300px] m-auto">
       <input value={accountNumber} onChange={(e) => setAccountNumber(e.target.value)} type="text" placeholder="New account number" className="input" />
       <button onClick={UpdateAccountNumber} className="submitButton">
-        Save
+        Upgrade
       </button>
     </div>
   );
