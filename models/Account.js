@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
-import { Companies, Strategy, Pairs } from "@/lib/AppData";
-import Payout from "./Payout";
+import * as Settings from "@/lib/AppData";
 import User from "./User";
 
 const AccountSchema = new mongoose.Schema(
@@ -110,7 +109,7 @@ AccountSchema.pre("save", async function (next) {
   next();
 });
 
-// DONE
+// PROGRESS METHODS
 AccountSchema.methods.accountInitialization = async function (userId, companyName, capital) {
   const company = GetCompany(companyName);
   this.user = userId;
@@ -129,7 +128,6 @@ AccountSchema.methods.accountInitialization = async function (userId, companyNam
   return;
 };
 
-// DONE
 AccountSchema.methods.createUpgradedAccount = async function (oldAccount, newNumber) {
   this.user = oldAccount.user;
 
@@ -149,7 +147,6 @@ AccountSchema.methods.createUpgradedAccount = async function (oldAccount, newNum
   return;
 };
 
-// DONE
 AccountSchema.methods.upgradeAccount = async function (nextAccountId) {
   await this.populate("user");
   await this.user.removeAccount(this._id);
@@ -162,7 +159,6 @@ AccountSchema.methods.upgradeAccount = async function (nextAccountId) {
   return;
 };
 
-// DONE
 AccountSchema.methods.accountPurchased = async function (number) {
   this.number = number;
   this.status = "Live";
@@ -173,7 +169,6 @@ AccountSchema.methods.accountPurchased = async function (number) {
   return;
 };
 
-// DONE
 AccountSchema.methods.targetReached = function () {
   const company = GetCompany(this.company);
   if (company.phases.length === this.phase + 1) {
@@ -184,48 +179,6 @@ AccountSchema.methods.targetReached = function () {
     this.addActivity("Phase passed", "The account reach the target");
   }
   this.eventsTimestamp.targetReachedDate = new Date();
-};
-
-// DONE
-AccountSchema.methods.accountLost = function () {
-  this.status = "Review";
-  this.addActivity("Account lost", "Account lost");
-  this.eventsTimestamp.lostDate = new Date();
-};
-
-// DONE
-AccountSchema.methods.getStopLoss = function () {
-  const company = Companies.find((company) => company.name === this.company);
-  const maxRiskPerTradePercentage = company.phases[account.phase].maxRiskPerTrade;
-  const randomFactor = Math.random() * (1 - Strategy.tradesRandomFactor) + Strategy.tradesRandomFactor;
-  const stopLoss = Math.round(maxRiskPerTradePercentage * this.capital * randomFactor);
-  return stopLoss;
-};
-// DONE
-AccountSchema.methods.getTakeProfit = function (stopLoss, pair, lots) {
-  const pairObj = Pairs.find((pairItem) => pairItem.pair === pair);
-  const companyObj = Companies.find((company) => company.name === this.company);
-
-  const maxTakeProfit = stopLoss * Strategy.maxRiskToRewardRatio;
-  const company = Companies.find((company) => company.name === this.company);
-  const phaseDetails = company.phases[account.phase];
-  const targetBalance = this.capital * (1 + phaseDetails.target);
-  const remainingBalance = targetBalance - this.balance;
-  const randomFactor = Math.random() * (1 - Strategy.tradesRandomFactor) + Strategy.tradesRandomFactor;
-  let takeProfit;
-  if (remainingBalance < maxTakeProfit) {
-    takeProfit = remainingBalance + pairObj.spread * lots + companyObj.commissionFactor * lots + Strategy.extraTakeProfitPoints * lots;
-  } else {
-    takeProfit = maxTakeProfit * randomFactor;
-  }
-  return takeProfit;
-};
-
-AccountSchema.methods.updateBalance = async function (newBalance) {
-  this.addActivity("Balance updated", `Balance updated from ${this.balance} to ${newBalance}`);
-  this.balance = newBalance;
-  await this.save();
-  return;
 };
 
 AccountSchema.methods.reviewFinished = async function () {
@@ -261,7 +214,61 @@ AccountSchema.methods.moneySended = async function (payoutAmount) {
   return;
 };
 
-// DONE
+AccountSchema.methods.accountLost = function () {
+  this.status = "Review";
+  this.addActivity("Account lost", "Account lost");
+  this.eventsTimestamp.lostDate = new Date();
+};
+
+// GET METHODS
+AccountSchema.methods.getStopLossPoints = function (pair) {
+  const daySchedule = Settings.GetDaySchedule();
+  const pairObj = Settings.GetPairDetails(pair);
+
+  const minimumPoints = daySchedule.mode === "slow" ? pairObj.slowMode.minimumPoints : pairObj.fastMode.minimumPoints;
+  return Math.round(minimumPoints + minimumPoints * Math.random() * 0.2);
+};
+AccountSchema.methods.getStopLossAmount = function () {
+  const company = Settings.GetCompany(this.company);
+  const maxRiskPerTradePercentage = company.phases[this.phase].maxRiskPerTrade;
+  const randomRiskPercentage = maxRiskPerTradePercentage * Settings.GetRandomFactor();
+  const riskAmount = Math.round(this.capital * randomRiskPercentage);
+  return riskAmount;
+};
+AccountSchema.methods.getLots = function (pair, stopLossPoints, riskAmount) {
+  const pairObj = Settings.GetPairDetails(pair);
+  const pointValue = pairObj.pointValue;
+  const lots = parseFloat(riskAmount / (stopLossPoints * pointValue).toFixed(2));
+  return lots;
+};
+AccountSchema.methods.getTakeProfit = function (pair, stopLossPoints, lots) {
+  const daySchedule = Settings.GetDaySchedule();
+  const pairObj = Settings.GetPairDetails(pair);
+  const maximumSettingsTakeProfitPoints = daySchedule.mode === "slow" ? pairObj.slowMode.maximumPoints : pairObj.fastMode.maximumPoints;
+  const maxStopLossTakeProfitPoints = stopLossPoints * Settings.Strategy.maxRiskToRewardRatio;
+  const maxTakeProfitPoints = Math.min(maximumSettingsTakeProfitPoints, maxStopLossTakeProfitPoints);
+  const maxTakeProfitAmount = maxTakeProfitPoints * pairObj.pointValue;
+
+  const company = Settings.GetCompany(this.company);
+  const targetBalance = this.capital * (1 + company.phases[this.phase].target);
+  const remainingBalance = targetBalance - this.balance;
+  let takeProfit;
+  if (remainingBalance < maxTakeProfitAmount) {
+    takeProfit = parseFloat((remainingBalance + pairObj.spread * lots + company.commissionFactor * lots * Settings.Strategy.extraTakeProfitPoints * lots).toFixed(2));
+  } else {
+    takeProfit = parseFloat((maxTakeProfitAmount * Settings.GetRandomFactor()).toFixed(2));
+  }
+  return takeProfit;
+};
+
+// UPDATE METHODS
+AccountSchema.methods.updateBalance = async function (newBalance) {
+  this.addActivity("Balance updated", `Balance updated from ${this.balance} to ${newBalance}`);
+  this.balance = newBalance;
+  await this.save();
+  return;
+};
+
 AccountSchema.methods.addActivity = function (title, description) {
   this.activities.push({
     title: title,
@@ -274,7 +281,5 @@ const GetCompany = (name) => {
   if (!company) throw new Error(`Company ${name} not found. Account Model -> GetCompany`);
   return company;
 };
-
-AccountSchema.methods.openTrade = async function () {};
 
 export default mongoose.models.Account || mongoose.model("Account", AccountSchema);

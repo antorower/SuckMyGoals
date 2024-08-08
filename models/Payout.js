@@ -1,8 +1,3 @@
-import mongoose from "mongoose";
-import User from "./User";
-import Account from "./Account";
-import { Payments } from "@/lib/AppData";
-
 const PayoutSchema = new mongoose.Schema(
   {
     user: {
@@ -23,6 +18,16 @@ const PayoutSchema = new mongoose.Schema(
       enum: ["Pending", "Accepted"],
     },
     acceptedDate: Date,
+    rejectedUserPayments: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+        profit: Number,
+        reason: String,
+      },
+    ],
   },
   { timestamps: true }
 );
@@ -50,10 +55,29 @@ PayoutSchema.methods.createNewPayout = async function (userId, accountId, payout
 };
 
 PayoutSchema.methods.acceptPayout = async function () {
-  await this.populate("account");
+  await this.populate("user").populate("account");
   await this.account.resetAfterPayoutSended();
   this.status = "Accepted";
   this.acceptedDate = new Date();
+
+  const payoutAmount = this.payoutAmount;
+  const beneficiaries = this.user.beneficiaries || [];
+
+  const profitPromises = beneficiaries.map(async (beneficiary) => {
+    const profit = payoutAmount * (beneficiary.percentage / 100);
+    try {
+      const user = await User.findById(beneficiary.user);
+      await user.addProfits(profit, this.user._id, this.account._id);
+    } catch (error) {
+      console.error(`Failed to update profits for beneficiary ${beneficiary.user}:`, error);
+      this.rejectedUserPayments.push({
+        user: beneficiary.user,
+        profit: profit,
+        reason: error.message,
+      });
+    }
+  });
+  await Promise.allSettled(profitPromises);
   await this.save();
   return;
 };

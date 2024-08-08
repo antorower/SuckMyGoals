@@ -81,6 +81,23 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  profitsProgress: [
+    {
+      amount: Number,
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+      account: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Account",
+      },
+      date: {
+        type: Date,
+        default: () => new Date(),
+      },
+    },
+  ],
   lastTradeOpened: Date,
 });
 
@@ -102,7 +119,6 @@ UserSchema.methods.addAccount = async function (accountId) {
   await this.save();
   return;
 };
-
 UserSchema.methods.removeAccount = async function (accountId) {
   if (!this.accounts.includes(accountId)) return;
   this.accounts.pull(accountId);
@@ -116,7 +132,6 @@ UserSchema.methods.addLeader = async function (userId) {
   await this.save();
   return;
 };
-
 UserSchema.methods.removeLeader = async function (userId) {
   if (!this.leaders.includes(userId)) return;
   this.leaders.pull(userId);
@@ -124,16 +139,30 @@ UserSchema.methods.removeLeader = async function (userId) {
   return;
 };
 
-UserSchema.methods.addBeneficiary = async function (userId, percentage) {
-  if (this.beneficiaries.includes(userId)) return;
-  this.leaders.push(userId);
+UserSchema.methods.addRelatedUser = async function (userId) {
+  this.relatedUser = userId;
+  await this.save();
+  return;
+};
+UserSchema.methods.removeRelatedUser = async function () {
+  this.relatedUser = null;
   await this.save();
   return;
 };
 
+UserSchema.methods.addBeneficiary = async function (userId, percentage) {
+  const existingBeneficiary = this.beneficiaries.find((beneficiary) => beneficiary.user.equals(userId));
+  if (existingBeneficiary) {
+    existingBeneficiary.percentage = percentage;
+  } else {
+    this.beneficiaries.push({ user: userId, percentage });
+  }
+  await this.save();
+  return;
+};
 UserSchema.methods.removeBeneficiary = async function (userId) {
-  if (!this.leaders.includes(userId)) return;
-  this.leaders.pull(userId);
+  if (!this.beneficiaries.some((beneficiary) => beneficiary.user.equals(userId))) return;
+  this.beneficiaries = this.beneficiaries.filter((beneficiary) => !beneficiary.user.equals(userId));
   await this.save();
   return;
 };
@@ -144,10 +173,22 @@ UserSchema.methods.addActiveCompany = async function (companyName) {
   await this.save();
   return;
 };
-
 UserSchema.methods.removeActiveCompany = async function (companyName) {
   if (!this.activeCompanies.includes(companyName)) return;
   this.activeCompanies.pull(companyName);
+  await this.save();
+  return;
+};
+
+UserSchema.methods.addProfits = async function (profit, userId, accountId) {
+  this.profits = this.profits + profit;
+  this.profitsProgress.push({ amount: profit, user: userId, account: accountId });
+  await this.save();
+  return;
+};
+
+UserSchema.methods.updateNote = async function (note) {
+  this.note = note;
   await this.save();
   return;
 };

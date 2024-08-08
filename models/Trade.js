@@ -40,8 +40,10 @@ const TradeSchema = new mongoose.Schema(
       note: String,
     },
     balanceCategory: Number,
-    normalLoss: Number,
-    actualLoss: Number,
+    normalLossAmount: Number,
+    normalLossPercentage: Number,
+    actualLossAmount: Number,
+    actualLossPercentage: Number,
   },
   { timestamps: true }
 );
