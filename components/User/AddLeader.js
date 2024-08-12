@@ -56,7 +56,7 @@ const AddLeader = ({ userId, leaders }) => {
             <div className="flex flex-wrap gap-2 text-xs text-gray-400">
               <div>Leaders: </div>
               {leadersObj.map((leader) => (
-                <button onClick={() => RemoveLeader(leader._id.toString())} key={leader._id.toString()}>
+                <button onClick={() => RemoveLeader(leader._id.toString())} key={leader._id.toString() + leader._id.toString()}>
                   {leader.firstName} {leader.lastName}
                 </button>
               ))}

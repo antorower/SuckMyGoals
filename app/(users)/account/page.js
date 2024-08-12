@@ -7,22 +7,35 @@ import AccountNumberForm from "@/components/User/Accounts/AccountNumberForm";
 import NewAccountNumberForm from "@/components/User/Accounts/NewAccountNumberForm";
 import LiveAccountDetails from "@/components/User/Accounts/LiveAccountDetails";
 import { GetDaySchedule } from "@/lib/AppData";
+import { UserButton } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
+import PayoutPhase from "@/components/User/Accounts/PayoutPhase";
 
 const Account = async ({ searchParams }) => {
+  const clerkUser = await currentUser();
+
   const daySchedule = GetDaySchedule();
   const dayNote = daySchedule?.note;
 
   const urlAccountId = searchParams.account;
+  const accountCorrect = searchParams.accountcorrect === "true";
   if (!urlAccountId) notFound();
-
   const account = await GetAccountById(urlAccountId);
-  if (!account) notFound();
+  if (!account || account.error) notFound();
+  const admin = clerkUser.publicMetadata.owner;
+  const owner = clerkUser.publicMetadata.mongoId === account.user._id.toString();
+
   const company = Companies.find((company) => company.name === account.company);
 
   return (
     <div className="flex flex-col gap-4 w-full">
-      <div className="flex justify-center w-full p-4 text-xl border-b border-gray-800">
-        {account.user.firstName} {account.user.lastName}
+      <div className="flex gap-4 justify-center w-full p-4 text-xl border-b border-gray-800">
+        <div>
+          <UserButton />
+        </div>
+        <Link href={`/user?user=${account.user._id.toString()}`}>
+          {account.user.firstName} {account.user.lastName}
+        </Link>
       </div>
       {account.number && <div className="flex justify-center items-center w-full p-2 text-3xl font-bold gap-4">{account.number}</div>}
       <div className="flex justify-center text-gray-400 text-sm border-y border-gray-800 p-3 text-center">{account.note}</div>
@@ -40,9 +53,9 @@ const Account = async ({ searchParams }) => {
         </div>
       )}
       {dayNote && dayNote !== "" && <div className="text-2xl flex justify-center animate-pulse bg-red-600 w-full p-4 font-semibold">{dayNote}</div>}
-      {account.status === "WaitingPurchase" && <AccountNumberForm accountId={account._id.toString()} />}
-      {account.status === "NeedUpgrade" && <NewAccountNumberForm oldAccountId={account._id.toString()} />}
-      {account.status === "Live" && <LiveAccountDetails account={account} />}
+      {account.status === "WaitingPurchase" && (admin || owner) && <AccountNumberForm accountId={account._id.toString()} admin={admin} owner={owner} />}
+      {account.status === "Live" && <LiveAccountDetails account={account} admin={admin} owner={owner} accountCorrect={accountCorrect} />}
+      {(account.status === "WaitingPayout" || account.status === "PayoutRequestDone" || account.status === "MoneySended") && <PayoutPhase admin={admin} owner={owner} status={account.status} />}
     </div>
   );
 };

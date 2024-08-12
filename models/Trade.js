@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { ReviewSettings, Pairs, Companies } from "@/lib/AppData";
+import dbConnect from "@/dbConnect";
 
 const TradeSchema = new mongoose.Schema(
   {
@@ -49,29 +50,6 @@ const TradeSchema = new mongoose.Schema(
 );
 
 export default mongoose.models.Trade || mongoose.model("Trade", TradeSchema);
-
-TradeSchema.methods.OpenTrade = async function (userId, accountId, openBalance, pair, position, lots, stopLoss, takeProfit, matched) {
-  this.user = userId;
-  this.account = accountId;
-  await this.save();
-  await this.populate("account");
-  this.company = account.company;
-  this.capital = account.capital;
-  this.trade.openBalance = openBalance;
-  this.trade.pair = pair;
-  this.trade.position = position;
-  this.trade.lots = lots;
-  this.trade.stopLoss = stopLoss;
-  this.trade.takeProfit = takeProfit;
-  this.trade.openTime = new Date();
-  this.matched = matched;
-  this.normalLoss = stopLoss / this.account.capital;
-  if (matched) this.matchingTime = new Date();
-  this.status = "Open";
-  this.balanceCategory = account.metadata.balanceCategory;
-  this.account.lastTrade = this._id;
-  await this.save();
-};
 
 TradeSchema.methods.CloseTrade = async function (closeBalance) {
   const pairObj = Pairs.find((pair) => pair.pair === this.trade.pair);

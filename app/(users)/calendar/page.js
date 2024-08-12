@@ -25,7 +25,7 @@ const Calendar = async () => {
 
   return (
     <div className="flex flex-col gap-4 w-full">
-      <div className="flex justify-center items-center text-2xl border-b border-gray-800 py-4">Calendar</div>
+      <div className="flex justify-center items-center text-2xl border-b text-gray-400 border-gray-800 py-4">Calendar</div>
       <div className="flex flex-wrap justify-center gap-4">
         {renderDaySchedule("Monday", Schedule.monday)}
         {renderDaySchedule("Tuesday", Schedule.tuesday)}

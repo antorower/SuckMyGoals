@@ -18,7 +18,7 @@ const NewAccountNumberForm = ({ oldAccountId }) => {
       toast.error(response.message);
     } else {
       toast.success(response.message);
-      router.refresh();
+      router.push(`account?account=${accountNumber}`);
     }
   };
 
