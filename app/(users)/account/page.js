@@ -46,16 +46,48 @@ const Account = async ({ searchParams }) => {
         <div>-</div>
         <div>${account.balance.toLocaleString("de-DE")}</div>
       </div>
-      {account.status !== "WaitingPurchase" && (
+      {/* INSTRUCTIONS */}
+      {account.status == "Live" && (
         <div className="w-full m-auto flex flex-col gap-2 justify-center border-y border-gray-800 p-4">
           <div className="font-semibold m-auto">Instructions</div>
           <div className="text-sm text-gray-400 text-center">{company.phases[account.phase].instructions}</div>
         </div>
       )}
+      {account.status == "WaitingPurchase" && (
+        <div className="w-full m-auto flex flex-col gap-2 justify-center border-y border-gray-800 p-4">
+          <div className="font-semibold m-auto">Instructions</div>
+          <div className="text-sm text-gray-400 text-center">{company.waitingPurchaseInstructions}</div>
+        </div>
+      )}
+      {account.status == "NeedUpgrade" && (
+        <div className="w-full m-auto flex flex-col gap-2 justify-center border-y border-gray-800 p-4">
+          <div className="font-semibold m-auto">Instructions</div>
+          <div className="text-sm text-gray-400 text-center">{company.needUpgradeInstructions}</div>
+        </div>
+      )}
+      {account.status == "WaitingPayout" && (
+        <div className="w-full m-auto flex flex-col gap-2 justify-center border-y border-gray-800 p-4">
+          <div className="font-semibold m-auto">Instructions</div>
+          <div className="text-sm text-gray-400 text-center">{company.waitingPayoutInstructions}</div>
+        </div>
+      )}
+      {account.status == "PayoutRequestDone" && (
+        <div className="w-full m-auto flex flex-col gap-2 justify-center border-y border-gray-800 p-4">
+          <div className="font-semibold m-auto">Instructions</div>
+          <div className="text-sm text-gray-400 text-center">{company.payoutRequestDoneInstructions}</div>
+        </div>
+      )}
+      {account.status == "MoneySended" && (
+        <div className="w-full m-auto flex flex-col gap-2 justify-center border-y border-gray-800 p-4">
+          <div className="font-semibold m-auto">Instructions</div>
+          <div className="text-sm text-gray-400 text-center">{company.moneySendedInstructions}</div>
+        </div>
+      )}
+      {/* INSTRUCTIONS */}
       {dayNote && dayNote !== "" && <div className="text-2xl flex justify-center animate-pulse bg-red-600 w-full p-4 font-semibold">{dayNote}</div>}
       {account.status === "WaitingPurchase" && (admin || owner) && <AccountNumberForm accountId={account._id.toString()} admin={admin} owner={owner} />}
       {account.status === "Live" && <LiveAccountDetails account={account} admin={admin} owner={owner} accountCorrect={accountCorrect} />}
-      {(account.status === "WaitingPayout" || account.status === "PayoutRequestDone" || account.status === "MoneySended") && <PayoutPhase admin={admin} owner={owner} status={account.status} />}
+      {(account.status === "WaitingPayout" || account.status === "PayoutRequestDone" || account.status === "MoneySended") && <PayoutPhase account={account} admin={admin} owner={owner} />}
     </div>
   );
 };

@@ -38,13 +38,16 @@ const AccountSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Trade",
     },
+    payoutRequestDate: {
+      day: Number,
+      month: Number,
+    },
     eventsTimestamp: {
       targetReachedDate: Date,
       lostDate: Date,
       purchaseDate: Date,
       firstTradeDate: Date,
       upgradedDate: Date,
-      payoutRequestDate: Date,
       payoutRequestDoneDate: Date,
       profitsSendedDate: Date,
     },
@@ -187,13 +190,6 @@ AccountSchema.methods.reviewFinished = async function () {
   return;
 };
 
-AccountSchema.methods.payoutRequestDone = async function () {
-  this.status = "PayoutRequestDone";
-  this.addActivity("Payout request done", "Payout request done");
-  await this.save();
-  return;
-};
-
 AccountSchema.methods.resetAfterPayoutSended = async function () {
   this.balance = this.capital;
   this.status = "Live";
@@ -206,17 +202,27 @@ AccountSchema.methods.resetAfterPayoutSended = async function () {
   return;
 };
 
-AccountSchema.methods.moneySended = async function (payoutAmount) {
-  this.status = "PayoutRequestDone";
-  this.addActivity("Payout request done", "Payout request done");
-  await this.save();
-  return;
-};
-
 AccountSchema.methods.accountLost = function () {
   this.status = "Review";
   this.addActivity("Account lost", "Account lost");
   this.eventsTimestamp.lostDate = new Date();
+};
+
+AccountSchema.methods.payoutRequestDone = async function () {
+  this.status = "PayoutRequestDone";
+  this.payoutRequestDate.day = null;
+  this.payoutRequestDate.month = null;
+  this.addActivity("Payout request done", "Payout request done");
+  this.eventsTimestamp.profitsSendedDate = new Date();
+  await this.save();
+};
+
+AccountSchema.methods.moneySended = async function () {
+  this.status = "MoneySended";
+  this.addActivity("Payout request done", "Payout request done");
+  this.metadata.timesPaid = this.metadata.timesPaid + 1;
+  this.eventsTimestamp.payoutRequestDoneDate = new Date();
+  await this.save();
 };
 
 // GET METHODS
@@ -272,6 +278,13 @@ AccountSchema.methods.addActivity = function (title, description) {
     title: title,
     description: description,
   });
+};
+
+AccountSchema.methods.updatePayoutRequestDate = async function (day, month) {
+  this.payoutRequestDate.day = day;
+  this.payoutRequestDate.month = month;
+  await this.save();
+  return;
 };
 
 export default mongoose.models.Account || mongoose.model("Account", AccountSchema);

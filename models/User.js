@@ -150,19 +150,18 @@ UserSchema.methods.removeRelatedUser = async function () {
   return;
 };
 
-UserSchema.methods.addBeneficiary = async function (userId, percentage) {
-  const existingBeneficiary = this.beneficiaries.find((beneficiary) => beneficiary.user.equals(userId));
+UserSchema.methods.addBeneficiary = async function (beneficiaryId, percentage) {
+  const existingBeneficiary = this.beneficiaries.find((beneficiary) => beneficiary.user.equals(beneficiaryId));
   if (existingBeneficiary) {
     existingBeneficiary.percentage = percentage;
   } else {
-    this.beneficiaries.push({ user: userId, percentage });
+    this.beneficiaries.push({ user: beneficiaryId, percentage });
   }
   await this.save();
   return;
 };
-UserSchema.methods.removeBeneficiary = async function (userId) {
-  if (!this.beneficiaries.some((beneficiary) => beneficiary.user.equals(userId))) return;
-  this.beneficiaries = this.beneficiaries.filter((beneficiary) => !beneficiary.user.equals(userId));
+UserSchema.methods.removeBeneficiary = async function (beneficiaryId) {
+  this.beneficiaries.pull({ user: beneficiaryId });
   await this.save();
   return;
 };
