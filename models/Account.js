@@ -229,6 +229,7 @@ AccountSchema.methods.moneySended = async function () {
 AccountSchema.methods.getStopLossPoints = function (pair) {
   const daySchedule = Settings.GetDaySchedule();
   const pairObj = Settings.GetPairDetails(pair);
+  if (!pairObj) throw new Error("No pair details found from getStopLossPoints");
   const minimumPoints = daySchedule.mode === "slow" ? pairObj.slowMode.minimumPoints : pairObj.fastMode.minimumPoints;
   return Math.round(minimumPoints + minimumPoints * Math.random() * 0.15);
 };

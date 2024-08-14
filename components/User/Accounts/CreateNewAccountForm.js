@@ -25,7 +25,7 @@ const CreateNewAccountForm = ({ userId, companyName }) => {
 
   return (
     <div className="form form-small">
-      <input autoFocus value={capital} onChange={(e) => setCapital(Number(e.target.value))} type="number" placeholder="Capital" className="input" />
+      <input autoFocus value={capital} onChange={(e) => setCapital(e.target.value)} type="number" placeholder="Capital" className="input" />
       <button onClick={CreateAccount} className="submitButton">
         Create
       </button>

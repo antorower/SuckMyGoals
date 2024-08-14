@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { clerkClient } from "@clerk/nextjs/server";
 
 const UserSchema = new mongoose.Schema({
   clerkId: {
@@ -98,6 +99,10 @@ const UserSchema = new mongoose.Schema({
       },
     },
   ],
+  accepted: {
+    type: Boolean,
+    default: false,
+  },
   lastTradeOpened: Date,
 });
 
@@ -189,6 +194,19 @@ UserSchema.methods.addProfits = async function (profit, userId, accountId) {
 UserSchema.methods.updateNote = async function (note) {
   this.note = note;
   await this.save();
+  return;
+};
+
+UserSchema.methods.acceptUser = async function (clerkId) {
+  this.accepted = true;
+  await this.save();
+
+  await clerkClient.users.updateUserMetadata(clerkId, {
+    publicMetadata: {
+      accepted: true,
+    },
+  });
+
   return;
 };
 

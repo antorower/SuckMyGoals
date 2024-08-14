@@ -87,7 +87,9 @@ const Account = async ({ searchParams }) => {
       {dayNote && dayNote !== "" && <div className="text-2xl flex justify-center animate-pulse bg-red-600 w-full p-4 font-semibold">{dayNote}</div>}
       {account.status === "WaitingPurchase" && (admin || owner) && <AccountNumberForm accountId={account._id.toString()} admin={admin} owner={owner} />}
       {account.status === "Live" && <LiveAccountDetails account={account} admin={admin} owner={owner} accountCorrect={accountCorrect} />}
+      {account.status === "NeedUpgrade" && <NewAccountNumberForm oldAccountId={account._id.toString()} />}
       {(account.status === "WaitingPayout" || account.status === "PayoutRequestDone" || account.status === "MoneySended") && <PayoutPhase account={account} admin={admin} owner={owner} />}
+      {(account.status === "Review" || account.status === "Lost") && <div className="m-auto font-bold animate-pulse text-red-600">Your account {account.number} lost</div>}
     </div>
   );
 };
