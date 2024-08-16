@@ -1,4 +1,3 @@
-"use client";
 import React, { useState } from "react";
 import { currentUser } from "@clerk/nextjs/server";
 import { RegisterUser } from "@/lib/RegisterActions";
@@ -6,7 +5,6 @@ import { RegisterOwner } from "@/lib/RegisterActions";
 import { notFound } from "next/navigation";
 
 const Register = async () => {
-  const [isButtonActive, setIsButtonActive] = useState(true);
   const clerkUser = await currentUser();
   if (!clerkUser) notFound();
 
@@ -17,7 +15,7 @@ const Register = async () => {
       <input type="tel" title="Telephone should only contain numbers and special characters like +, -, (, )." minLength={3} maxLength={20} name="telephone" autoComplete="none" placeholder="Telephone" className={`${inputClasses} border-t border-x`} />
       <input type="email" minLength={3} maxLength={50} name="bybitEmail" autoComplete="none" placeholder="Bybit Email" className={`${inputClasses} border-t border-x`} />
       <input type="text" required minLength={3} maxLength={20} name="bybitUid" autoComplete="none" placeholder="Bybit Uid" className={`${inputClasses} border`} />
-      <button onClick={() => setIsButtonActive(false)} disabled={!isButtonActive} type="submit" required className="bg-orange-700 p-3 rounded-b hover:bg-orange-600 text-white font-semibold outline-none">
+      <button type="submit" required className="bg-orange-700 p-3 rounded-b hover:bg-orange-600 text-white font-semibold outline-none">
         Register
       </button>
     </form>
