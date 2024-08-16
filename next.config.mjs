@@ -17,14 +17,3 @@ const nextConfig = {
 };
 
 export default nextConfig;
-
-/* 
-
-  experimental: {
-    staleTimes: {
-      dynamic: 0,
-      static: 0,
-    },
-  },
-
-  */
