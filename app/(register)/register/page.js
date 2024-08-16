@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { currentUser } from "@clerk/nextjs/server";
 import { RegisterUser } from "@/lib/RegisterActions";
 import { RegisterOwner } from "@/lib/RegisterActions";
