@@ -1,13 +1,18 @@
 import { Schedule } from "@/lib/AppData";
+import { GetDayString } from "@/lib/AppData";
 
 const Calendar = async () => {
+  const dayString = GetDayString();
   const renderDaySchedule = (day, settings) => (
-    <div className={`border border-gray-800 rounded w-[280px] px-4 py-2 flex flex-col gap-2 ${settings.active ? "text-white" : "text-gray-400"}`}>
-      <div className="m-auto font-medium">{day}</div>
+    <div className={`border ${dayString === day.toLowerCase() ? "animate-pulse" : null} border-gray-800 rounded w-[280px] px-4 py-2 flex flex-col gap-2 ${settings.active ? "text-white" : "text-gray-400"}`}>
+      <div className="m-auto font-medium text-center">
+        <div>{day}</div>
+        <div className="text-xs text-gray-400">{settings?.dateString}</div>
+      </div>
       <hr className="border-none bg-gray-800 h-[1px]" />
       {settings.active ? (
         <>
-          <div className="animate-pulse text-center">{settings.note}</div>
+          <div className="text-center">{settings.note}</div>
           <div className="flex justify-between text-sm">
             <div>Starting:</div>
             <div>{settings?.schedule?.startingHour}:00</div>
