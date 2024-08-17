@@ -82,23 +82,6 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  profitsProgress: [
-    {
-      amount: Number,
-      user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-      account: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Account",
-      },
-      date: {
-        type: Date,
-        default: () => new Date(),
-      },
-    },
-  ],
   accepted: {
     type: Boolean,
     default: false,
@@ -198,16 +181,21 @@ UserSchema.methods.updateNote = async function (note) {
 };
 
 UserSchema.methods.acceptUser = async function (clerkId) {
-  this.accepted = true;
-  await this.save();
-
   await clerkClient.users.updateUserMetadata(clerkId, {
     publicMetadata: {
       accepted: true,
     },
   });
-
+  this.accepted = true;
+  await this.save();
   return;
+};
+
+UserSchema.methods.isLeader = function (leaderId) {
+  return this.leaders.includes(leaderId);
+};
+UserSchema.methods.isBeneficiary = function (leaderId) {
+  return this.beneficiaries.some((beneficiary) => beneficiary.user.equals(leaderId));
 };
 
 export default mongoose.models.User || mongoose.model("User", UserSchema);

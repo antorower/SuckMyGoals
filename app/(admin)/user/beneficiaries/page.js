@@ -8,7 +8,7 @@ import BeneficiaryCard from "@/components/User/BeneficiaryCard";
 
 const Beneficiaries = async ({ searchParams }) => {
   const clerkUser = await currentUser();
-  if (!clerkUser) notFound();
+  if (!clerkUser || !clerkUser.publicMetadata.owner) notFound();
 
   const userId = searchParams.user;
   if (!userId) notFound();
