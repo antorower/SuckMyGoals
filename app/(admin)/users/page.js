@@ -202,7 +202,7 @@ const Users = async ({ searchParams }) => {
               {user.note && (
                 <>
                   <hr className="border-none h-[1px] bg-gray-800 w-full" />
-                  <div className="text-xs text-center">{user.note}</div>
+                  <div className="text-xs text-center">{user?.note ? user.note : "-"}</div>
                   <hr className="border-none h-[1px] bg-gray-800 w-full" />
                 </>
               )}
@@ -233,7 +233,7 @@ const Users = async ({ searchParams }) => {
               </div>
               <div className="flex justify-between w-full items-center">
                 <div>Profits</div>
-                <div>${user.profits}</div>
+                <div>${user?.profits ? user.profits : 0}</div>
               </div>
             </Link>
           ))}
