@@ -44,7 +44,6 @@ const Users = async ({ searchParams }) => {
     toast.error(users.message);
     notFound();
   }
-  if (!users || users.length === 0) notFound();
 
   if (searchString) {
     const regex = new RegExp(searchString, "i"); // 'i' for case-insensitive
