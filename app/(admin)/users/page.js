@@ -87,14 +87,7 @@ const Users = async ({ searchParams }) => {
                   <div>{user.firstName}</div>
                   <div>{user.lastName}</div>
                 </div>
-                {!mode && <div className="text-sm text-gray-500">{user.nickname ? user.nickname : "user"}</div>}
-                {mode === "notes" && <div className="flex justify-center text-center text-xs text-gray-500">{user.note}</div>}
-                {mode === "profits" && <div className="flex justify-center text-center text-gray-500">{user.profits}$</div>}
-                {mode === "accounts" && (
-                  <div className="flex justify-center text-center text-gray-500">
-                    {user.numberOfAccounts}/{user.maxActiveAccounts}
-                  </div>
-                )}
+                <div className="text-sm text-gray-500">{user.nickname ? user.nickname : "user"}</div>
               </Link>
             ))}
           {(!users || users.length === 0) && <div className="animate-pulse">No users found</div>}
