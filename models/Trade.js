@@ -15,8 +15,8 @@ const TradeSchema = new mongoose.Schema(
     company: String,
     capital: Number,
     trade: {
-      openBalance: String,
-      closeBalance: String,
+      openBalance: Number,
+      closeBalance: Number,
       pair: String,
       position: {
         type: String,
