@@ -30,6 +30,10 @@ const TradeSchema = new mongoose.Schema(
     },
     matched: Boolean,
     matchingTime: Date,
+    matchingTrade: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Trade",
+    },
     status: {
       type: String,
       enum: ["Open", "Close", "Review"],
