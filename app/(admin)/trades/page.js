@@ -103,7 +103,7 @@ const Trades = async ({ searchParams }) => {
                   <div className="flex flex-col gap-2 text-sm text-gray-400">
                     <div className="flex justify-between gap-4">
                       <div>Matched:</div>
-                      <div>{trade.trade.matched ? "Yes" : "No"}</div>
+                      <div>{trade.matched ? "Yes" : "No"}</div>
                     </div>
                     {trade.matched && (
                       <div className="flex justify-between">
