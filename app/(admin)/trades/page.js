@@ -40,9 +40,12 @@ const Trades = async ({ searchParams }) => {
           <div className="flex gap-4">
             {tradesArray.map((trade) => {
               let borderColor = "border-gray-800";
+              let tradeWin;
               if (trade.status === "Close") {
                 borderColor = trade.trade.closeBalance >= trade.trade.openBalance ? "border-green-500" : "border-red-500";
+                tradeWin = trade.trade.closeBalance >= trade.trade.openBalance;
               }
+              const rrr = (trade.trade.takeProfit / trade.trade.stopLoss).toFixed(2);
 
               return (
                 <div key={trade._id.toString()} className={`flex flex-col gap-2 border ${borderColor} px-3 py-3 rounded`}>
@@ -57,7 +60,59 @@ const Trades = async ({ searchParams }) => {
                   <div className="flex gap-4 m-auto">
                     <div className="">{trade.trade.pair}</div>
                     <div className={`${trade.trade.position === "Buy" ? "text-green-500" : "text-red-500"}`}>{trade.trade.position}</div>
-                    <div className="">{trade.trade.lots}</div>
+                    <div className="text-gray-400">{trade.trade.lots}</div>
+                  </div>
+                  <div className="flex gap-4 m-auto">
+                    <div className={`${tradeWin ? "text-green-500" : "text-gray-400"}`}>{trade.trade.takeProfit}</div>
+                    <div className={`${tradeWin ? "text-gray-400" : "text-red-500"}`}>{trade.trade.stopLoss}</div>
+                  </div>
+                  <hr className="border-none h-[1px] bg-gray-800" />
+                  <div className="flex flex-col gap-2 text-sm text-gray-400">
+                    <div className="flex gap-4 justify-between">
+                      <div>Open Balance:</div>
+                      <div>{trade.trade.openBalance}</div>
+                    </div>
+                    <div className="flex gap-4 justify-between">
+                      <div>Close Balance:</div>
+                      <div>{trade.trade?.closeBalance ? trade.trade.closeBalance : "-"}</div>
+                    </div>
+                  </div>
+                  <hr className="border-none h-[1px] bg-gray-800" />
+                  <div className="flex flex-col gap-2 text-sm">
+                    <div className="flex justify-between gap-4">
+                      <div>Risk/Reward Ratio:</div>
+                      <div>{rrr}</div>
+                    </div>
+                    {tradeWin === undefined && (
+                      <div className={`flex justify-between ${trade.trade.actualLossAmount > trade.trade.normalLossAmount ? "text-red-300" : "text-green-300"}`}>
+                        <div>LsPr: ${trade.trade.normalLossAmount} </div>
+                        <div>AcLs: ${trade.trade.actualLossAmount} </div>
+                      </div>
+                    )}
+                  </div>
+                  <hr className="border-none h-[1px] bg-gray-800" />
+                  <div className="flex flex-col gap-2 text-sm text-gray-400">
+                    <div className="flex gap-4 justify-between">
+                      <div>Open Time:</div>
+                      <div>{new Date(trade.trade.openTime).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}</div>
+                    </div>
+                    <div className="flex gap-4 justify-between">
+                      <div>Close Time:</div>
+                      <div>{trade.trade?.closeTime ? new Date(trade.trade.closeTime).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) : "-"}</div>
+                    </div>
+                  </div>
+                  <hr className="border-none h-[1px] bg-gray-800" />
+                  <div className="flex flex-col gap-2 text-sm text-gray-400">
+                    <div className="flex justify-between gap-4">
+                      <div>Matched:</div>
+                      <div>{trade.trade.matched ? "Yes" : "No"}</div>
+                    </div>
+                    {trade.matched && (
+                      <div className="flex justify-between">
+                        <div>{trade?.matchingTrade?.pair}</div>
+                        <div>{trade?.matchingTrade?.position}</div>
+                      </div>
+                    )}
                   </div>
                 </div>
               );
