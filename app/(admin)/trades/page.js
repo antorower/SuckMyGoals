@@ -28,7 +28,7 @@ const Trades = async ({ searchParams }) => {
 
   // Convert the grouped trades object into an array of arrays
   const arrayOfArrays = Object.values(groupedTrades);
-  console.log(arrayOfArrays);
+
   return (
     <div className="w-full">
       <h1 className="flex justify-center p-4 font-semibold text-lg">
@@ -83,12 +83,10 @@ const Trades = async ({ searchParams }) => {
                       <div>Risk/Reward Ratio:</div>
                       <div>{rrr}</div>
                     </div>
-                    {tradeWin === undefined && (
-                      <div className={`flex justify-between ${trade.trade.actualLossAmount > trade.trade.normalLossAmount ? "text-red-300" : "text-green-300"}`}>
-                        <div>LsPr: ${trade.trade.normalLossAmount} </div>
-                        <div>AcLs: ${trade.trade.actualLossAmount} </div>
-                      </div>
-                    )}
+                    <div className={`flex justify-between ${trade.trade.actualLossAmount > trade.trade.normalLossAmount ? "text-red-300" : "text-gray-400"}`}>
+                      <div>LsPr: {trade.trade.normalLossAmount ? `$${trade.trade.normalLossAmount}` : "-"} </div>
+                      <div>AcLs: {trade.trade.actualLossAmount ? `$${trade.trade.actualLossAmount}` : "-"} </div>
+                    </div>
                   </div>
                   <hr className="border-none h-[1px] bg-gray-800" />
                   <div className="flex flex-col gap-2 text-sm text-gray-400">
