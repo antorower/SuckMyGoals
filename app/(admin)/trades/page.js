@@ -113,7 +113,7 @@ const Trades = async ({ searchParams }) => {
                     </div>
                     <div className="flex gap-4 justify-between">
                       <div>Close Time:</div>
-                      <div>{trade.trade?.closeTime ? new Date(trade.trade.closeTime).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) : "-"}</div>
+                      <div>{trade.trade?.closeTime ? new Date(trade.trade.closeTime).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit", timeZone: "Europe/Athens" }) : "-"}</div>
                     </div>
                   </div>
                   <hr className="border-none h-[1px] bg-gray-800" />
