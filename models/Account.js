@@ -78,7 +78,7 @@ AccountSchema.pre("save", async function (next) {
     const phase = company.phases[this.phase];
 
     const targetBalance = (1 + phase.target) * this.capital;
-    const drawdownBalance = (1 - phase.maxDrawdown / 100) * this.capital;
+    const drawdownBalance = (1 - phase.maxDrawdown) * this.capital;
     const targetDollars = phase.target * this.capital;
     const drawdownDollars = (1 - phase.maxDrawdown) * this.capital;
 
