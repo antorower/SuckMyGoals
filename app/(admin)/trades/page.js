@@ -10,9 +10,9 @@ const Trades = async ({ searchParams }) => {
 
   if (!day || !month || !year) {
     const today = new Date();
-    todayDay = today.getDate();
-    todayMonth = today.getMonth() + 1;
-    todayYear = today.getFullYear();
+    const todayDay = today.getDate();
+    const todayMonth = today.getMonth() + 1;
+    const todayYear = today.getFullYear();
     trades = await GetTradesByDay(todayDay, todayMonth, todayYear);
   } else {
     trades = await GetTradesByDay(day, month, year);
