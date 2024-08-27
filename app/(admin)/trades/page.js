@@ -119,8 +119,8 @@ const Trades = async ({ searchParams }) => {
                       <div>{rrr}</div>
                     </div>
                     <div className={`flex justify-between ${trade.actualLossAmount > trade.normalLossAmount ? "text-red-300" : "text-gray-400"}`}>
-                      <div>LsPr: {trade.normalLossAmount ? `$${trade.normalLossAmount}` : "-"} </div>
-                      <div>AcLs: {trade.actualLossAmount ? `$${trade.actualLossAmount}` : "-"} </div>
+                      <div>LsPr: {trade.normalLossAmount ? `$${parseInt(trade.normalLossAmount)}` : "-"} </div>
+                      <div>AcLs: {trade.actualLossAmount ? `$${parseInt(trade.actualLossAmount)}` : "-"} </div>
                     </div>
                   </div>
                   <hr className="border-none h-[1px] bg-gray-800" />
