@@ -1,6 +1,7 @@
 import { GetTradesByDay } from "@/lib/TradeActions";
 import { notFound } from "next/navigation";
 import { currentUser } from "@clerk/nextjs/server";
+import Link from "next/link";
 
 const Trades = async ({ searchParams }) => {
   const clerkUser = await currentUser();
