@@ -23,8 +23,10 @@ const Trades = async ({ searchParams }) => {
 
   trades.forEach((trade) => {
     if (trade.status === "Close" || trade.status === "Review") {
-      const balanceDifference = trade.trade.closeBalance - trade.trade.openBalance;
-      totalBalanceDifference += balanceDifference;
+      if (trade.trade?.closeBalance && trade.trade?.openBalance) {
+        const balanceDifference = trade.trade.closeBalance - trade.trade.openBalance;
+        totalBalanceDifference += balanceDifference;
+      }
     }
   });
 
