@@ -33,7 +33,6 @@ const User = async ({ searchParams }) => {
   return (
     <div className="flex w-full flex-col gap-4">
       <Name firstName={user.firstName} lastName={user.lastName} userId={user._id.toString()} />
-      <div className="flex justify-end text-xs px-4 text-gray-400">{GetCurrentTime()}</div>
       {admin && <AddLeader userId={user._id.toString()} leaders={JSON.stringify(user.leaders)} />}
       {admin && (
         <Link className="flex justify-end px-4 text-xs" href={`/user/beneficiaries?user=${user._id.toString()}`}>

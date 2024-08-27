@@ -37,7 +37,7 @@ const Trades = async ({ searchParams }) => {
       {arrayOfArrays.map((tradesArray, index) => (
         <div key={index} className="border border-gray-800 flex flex-col gap-4 p-4">
           <div className="font-bold text-2xl">{tradesArray[0].trade.pair}</div>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4">
             {tradesArray.map((trade) => {
               let borderColor = "border-gray-800";
               let tradeWin;
@@ -92,7 +92,7 @@ const Trades = async ({ searchParams }) => {
                   <div className="flex flex-col gap-2 text-sm text-gray-400">
                     <div className="flex gap-4 justify-between">
                       <div>Open Time:</div>
-                      <div>{new Date(trade.trade.openTime).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}</div>
+                      <div>{new Date(trade.trade.openTime).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit", timeZone: "Europe/Athens" })}</div>
                     </div>
                     <div className="flex gap-4 justify-between">
                       <div>Close Time:</div>
