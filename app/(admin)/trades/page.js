@@ -26,6 +26,7 @@ const Trades = async ({ searchParams }) => {
       if (trade.trade?.closeBalance && trade.trade?.openBalance) {
         const balanceDifference = trade.trade.closeBalance - trade.trade.openBalance;
         totalBalanceDifference += balanceDifference;
+        console.log(balanceDifference);
       }
     }
   });
