@@ -20,13 +20,24 @@ const Trades = async ({ searchParams }) => {
   }
 
   let totalBalanceDifference = 0;
+  let winTrades = 0;
+  let loseTrades = 0;
+  let noDifferenceTrades = 0;
 
   trades.forEach((trade) => {
     if (trade.status === "Close" || trade.status === "Review") {
       if (trade.trade?.closeBalance && trade.trade?.openBalance) {
         const balanceDifference = trade.trade.closeBalance - trade.trade.openBalance;
         totalBalanceDifference += balanceDifference;
-        console.log(balanceDifference);
+        if (balanceDifference < 0) {
+          loseTrades += 1;
+        }
+        if (balanceDifference > 0) {
+          winTrades += 1;
+        }
+        if (balanceDifference === 0) {
+          noDifferenceTrades += 1;
+        }
       }
     }
   });
@@ -51,6 +62,12 @@ const Trades = async ({ searchParams }) => {
       <h1 className="flex justify-center p-4 font-semibold text-lg">
         <Link href="/user">Back</Link> | Trades for {day}/{month}/{year} | {parseInt(totalBalanceDifference)}$
       </h1>
+      <div className="flex flex-wrap gap-4 px-3 py-3 m-auto">
+        <div>Result of the Day: {totalBalanceDifference}$</div>
+        <div>Total Trades: {trades.length}</div>
+        <div>Winning Trades: {winTrades}</div>
+        <div>Losing Trades: {loseTrades}</div>
+      </div>
       {arrayOfArrays.map((tradesArray, index) => (
         <div key={index} className="border border-gray-800 flex flex-col gap-4 p-4">
           <div className="font-bold text-2xl">{tradesArray[0].trade.pair}</div>
