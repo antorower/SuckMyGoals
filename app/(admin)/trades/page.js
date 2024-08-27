@@ -7,21 +7,12 @@ const Trades = async ({ searchParams }) => {
 
   if (!clerkUser || (!clerkUser.publicMetadata.owner && clerkUser.id !== "user_2kuThd9M40qCdvbHSbFY0sd8AlS")) notFound();
 
-  const day = searchParams.day;
-  const month = searchParams.month;
-  const year = searchParams.year;
+  const today = new Date();
+  const day = searchParams.day || today.getDate();
+  const month = searchParams.month || today.getMonth() + 1;
+  const year = searchParams.year || today.getFullYear();
 
-  let trades;
-
-  if (!day || !month || !year) {
-    const today = new Date();
-    const todayDay = today.getDate();
-    const todayMonth = today.getMonth() + 1;
-    const todayYear = today.getFullYear();
-    trades = await GetTradesByDay(todayDay, todayMonth, todayYear);
-  } else {
-    trades = await GetTradesByDay(day, month, year);
-  }
+  const trades = await GetTradesByDay(day, month, year);
 
   if (!trades || trades.length === 0) {
     return <div className="flex justify-center p-4 font-bold">No trades found for the selected date.</div>;

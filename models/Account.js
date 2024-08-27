@@ -18,7 +18,13 @@ const AccountSchema = new mongoose.Schema(
     capital: Number,
     phase: Number,
     phaseWeight: Number,
-    balance: Number,
+    balance: {
+      type: Number,
+      validate: {
+        validator: Number.isInteger,
+        message: "{VALUE} is not an integer value",
+      },
+    },
     activities: [
       {
         title: String,

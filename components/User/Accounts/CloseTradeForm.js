@@ -13,7 +13,16 @@ const CloseTradeForm = ({ tradeId }) => {
 
   const UpdateBalance = async () => {
     setIsButtonActive(false);
-    const response = await CloseTrade(tradeId, newBalance);
+    if (!newBalance) {
+      toast.warn("Please enter a valid integer for the balance");
+      return;
+    }
+    if (newBalance < 4500 || newBalance > 600000) {
+      toast.warn("Please enter a valid balance");
+      return;
+    }
+    const parsedBalance = parseInt(newBalance, 10);
+    const response = await CloseTrade(tradeId, parsedBalance);
     if (response.error) {
       toast.error(response.message);
       setIsButtonActive(true);
