@@ -37,7 +37,7 @@ const Trades = async ({ searchParams }) => {
       {arrayOfArrays.map((tradesArray, index) => (
         <div key={index} className="border border-gray-800 flex flex-col gap-4 p-4">
           <div className="font-bold text-2xl">{tradesArray[0].trade.pair}</div>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4">
             {tradesArray.map((trade) => {
               let borderColor = "border-gray-800";
               let tradeWin;
