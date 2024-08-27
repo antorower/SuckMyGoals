@@ -49,7 +49,7 @@ const Trades = async ({ searchParams }) => {
   return (
     <div className="w-full">
       <h1 className="flex justify-center p-4 font-semibold text-lg">
-        <Link href="/user">Back</Link> | Trades for {day}/{month}/{year} | {totalBalanceDifference}$
+        <Link href="/user">Back</Link> | Trades for {day}/{month}/{year} | {parseInt(totalBalanceDifference)}$
       </h1>
       {arrayOfArrays.map((tradesArray, index) => (
         <div key={index} className="border border-gray-800 flex flex-col gap-4 p-4">
