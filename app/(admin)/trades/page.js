@@ -6,9 +6,17 @@ const Trades = async ({ searchParams }) => {
   const month = searchParams.month;
   const year = searchParams.year;
 
-  if (!day || !month || !year) notFound();
+  let trades;
 
-  const trades = await GetTradesByDay(day, month, year);
+  if (!day || !month || !year) {
+    const today = new Date();
+    todayDay = today.getDate();
+    todayMonth = today.getMonth() + 1;
+    todayYear = today.getFullYear();
+    trades = await GetTradesByDay(todayDay, todayMonth, todayYear);
+  } else {
+    trades = await GetTradesByDay(day, month, year);
+  }
 
   if (!trades || trades.length === 0) {
     return <div className="flex justify-center p-4 font-bold">No trades found for the selected date.</div>;
