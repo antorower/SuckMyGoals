@@ -60,7 +60,7 @@ const Trades = async ({ searchParams }) => {
   return (
     <div className="w-full">
       <h1 className="flex justify-center p-4 font-semibold text-lg">
-        <Link href="/user">Back</Link> | Trades for {day}/{month}/{year} | {parseInt(totalBalanceDifference)}$
+        <Link href="/user"> Back </Link> | Trades for {day}/{month}/{year} | {parseInt(totalBalanceDifference)}$
       </h1>
       <div className="flex flex-wrap gap-4 px-3 py-3 justify-center items-center">
         <div className="border border-gray-800 rounded px-3 py-2">Result of the Day: {parseInt(totalBalanceDifference)}$</div>
