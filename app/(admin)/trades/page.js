@@ -18,6 +18,15 @@ const Trades = async ({ searchParams }) => {
     return <div className="flex justify-center p-4 font-bold">No trades found for the selected date.</div>;
   }
 
+  let totalBalanceDifference = 0;
+
+  trades.forEach((trade) => {
+    if (trade.status === "Close" || trade.status === "Review") {
+      const balanceDifference = trade.closeBalance - trade.openBalance;
+      totalBalanceDifference += balanceDifference;
+    }
+  });
+
   // Group trades by their pair
   const groupedTrades = trades.reduce((acc, trade) => {
     const pair = trade.trade.pair;
@@ -36,7 +45,7 @@ const Trades = async ({ searchParams }) => {
   return (
     <div className="w-full">
       <h1 className="flex justify-center p-4 font-semibold text-lg">
-        Trades for {day}/{month}/{year}
+        Trades for {day}/{month}/{year} | {totalBalanceDifference}$
       </h1>
       {arrayOfArrays.map((tradesArray, index) => (
         <div key={index} className="border border-gray-800 flex flex-col gap-4 p-4">
