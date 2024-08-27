@@ -62,11 +62,12 @@ const Trades = async ({ searchParams }) => {
       <h1 className="flex justify-center p-4 font-semibold text-lg">
         <Link href="/user">Back</Link> | Trades for {day}/{month}/{year} | {parseInt(totalBalanceDifference)}$
       </h1>
-      <div className="flex flex-wrap gap-4 px-3 py-3 m-auto">
-        <div>Result of the Day: {totalBalanceDifference}$</div>
-        <div>Total Trades: {trades.length}</div>
-        <div>Winning Trades: {winTrades}</div>
-        <div>Losing Trades: {loseTrades}</div>
+      <div className="flex flex-wrap gap-4 px-3 py-3 justify-center items-center">
+        <div className="border border-gray-800 rounded px-3 py-2">Result of the Day: {parseInt(totalBalanceDifference)}$</div>
+        <div className="border border-gray-800 rounded px-3 py-2">Total Trades: {trades.length}</div>
+        <div className="border border-gray-800 rounded px-3 py-2">Winning Trades: {winTrades}</div>
+        <div className="border border-gray-800 rounded px-3 py-2">Losing Trades: {loseTrades}</div>
+        <div className="border border-gray-800 rounded px-3 py-2">Zero Trades: {noDifferenceTrades}</div>
       </div>
       {arrayOfArrays.map((tradesArray, index) => (
         <div key={index} className="border border-gray-800 flex flex-col gap-4 p-4">
