@@ -24,6 +24,8 @@ const Accounts = async ({ searchParams }) => {
     });
   }
 
+  console.log(accounts[1]);
+
   if (sort === "company") {
     accounts.sort((a, b) => {
       if (a.company < b.company) return -1;
@@ -35,8 +37,10 @@ const Accounts = async ({ searchParams }) => {
   return (
     <div className="flex flex-wrap gap-4 p-8 items-start">
       {accounts.map((account) => (
-        <div className={`border px-3 py-2 ${account.balance > account.capital ? "border-green-600" : null} ${account.balance < account.capital ? "border-red-600" : null} ${account.balance === account.capital ? "border-gray-800" : null}`} key={account._id}>
-          <div>{account.number}</div>
+        <div className={`border text-center px-3 py-2 ${account.balance > account.capital ? "border-green-600" : null} ${account.balance < account.capital ? "border-red-600" : null} ${account.balance === account.capital ? "border-gray-800" : null}`} key={account._id}>
+          <div className={`${account.phaseWeight === 1 ? "text-blue-500" : null} ${account.phaseWeight === 2 ? "text-violet-500" : null} ${account.phaseWeight === 3 ? "text-orange-500" : null}`}>{account.company}</div>
+          <div className="text-gray-600">{account.number}</div>
+          <div className="text-gray-600">{account.status}</div>
           <div>{account.balance}</div>
         </div>
       ))}
