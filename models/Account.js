@@ -80,7 +80,6 @@ const AccountSchema = new mongoose.Schema(
 
 AccountSchema.pre("save", async function (next) {
   if (this.isModified("balance") || this.isNew) {
-    console.log("AAAAAAAAAAAAAA");
     const company = Settings.GetCompany(this.company);
     const phase = company.phases[this.phase];
 
