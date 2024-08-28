@@ -24,8 +24,6 @@ const Accounts = async ({ searchParams }) => {
     });
   }
 
-  console.log(accounts[1]);
-
   if (sort === "company") {
     accounts.sort((a, b) => {
       if (a.company < b.company) return -1;
@@ -34,16 +32,27 @@ const Accounts = async ({ searchParams }) => {
     });
   }
 
+  const profitAccountsNumber = accounts.filter((account) => account.balance > account.capital).length;
+  const neutralAccountsNumber = accounts.filter((account) => account.balance === account.capital).length;
+  const lossAccountsNumber = accounts.filter((account) => account.balance < account.capital).length;
+
   return (
-    <div className="flex flex-wrap gap-4 p-8 items-start">
-      {accounts.map((account) => (
-        <div className={`border text-center px-3 py-2 ${account.balance > account.capital ? "border-green-600" : null} ${account.balance < account.capital ? "border-red-600" : null} ${account.balance === account.capital ? "border-gray-800" : null}`} key={account._id}>
-          <div className={`${account.phaseWeight === 1 ? "text-blue-500" : null} ${account.phaseWeight === 2 ? "text-violet-500" : null} ${account.phaseWeight === 3 ? "text-orange-500" : null}`}>{account.company}</div>
-          <div className="text-gray-600">{account.number}</div>
-          <div className="text-gray-600">{account.status}</div>
-          <div>{account.balance}</div>
-        </div>
-      ))}
+    <div className="flex flex-col gap-2">
+      <div className="flex flex-wrap gap-3 mx-auto p-8">
+        <div className="border border-gray-800 px-3 py-2">Winning Accounts: {profitAccountsNumber}</div>
+        <div className="border border-gray-800 px-3 py-2">New Accounts: {neutralAccountsNumber}</div>
+        <div className="border border-gray-800 px-3 py-2">Lossing Accounts: {lossAccountsNumber}</div>
+      </div>
+      <div className="flex flex-wrap gap-4 p-8 items-start">
+        {accounts.map((account) => (
+          <div className={`border text-center px-3 py-2 ${account.balance > account.capital ? "border-green-600" : null} ${account.balance < account.capital ? "border-red-600" : null} ${account.balance === account.capital ? "border-gray-800" : null}`} key={account._id}>
+            <div className={`${account.phaseWeight === 1 ? "text-blue-500" : null} ${account.phaseWeight === 2 ? "text-violet-500" : null} ${account.phaseWeight === 3 ? "text-orange-500" : null}`}>{account.company}</div>
+            <div className="text-gray-600">{account.number}</div>
+            <div className="text-gray-600">{account.status}</div>
+            <div>{account.balance}</div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
