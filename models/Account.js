@@ -80,13 +80,14 @@ const AccountSchema = new mongoose.Schema(
 
 AccountSchema.pre("save", async function (next) {
   if (this.isModified("balance") || this.isNew) {
+    console.log("AAAAAAAAAAAAAA");
     const company = Settings.GetCompany(this.company);
     const phase = company.phases[this.phase];
 
     const targetBalance = (1 + phase.target) * this.capital;
     const drawdownBalance = (1 - phase.maxDrawdown) * this.capital;
     const targetDollars = phase.target * this.capital;
-    const drawdownDollars = (1 - phase.maxDrawdown) * this.capital;
+    const drawdownDollars = phase.maxDrawdown * this.capital;
 
     // Κάθε φορά που αλλάζει το balance ενημερώνεται η κατηγορία του account
     const step = (targetDollars + drawdownDollars) / 10;
@@ -100,6 +101,7 @@ AccountSchema.pre("save", async function (next) {
         break;
       }
     }
+    console.log(this.metadata.balanceCategory);
 
     // Κάθε φορά που αλλάζει το balance ελέγχεται αν το account πρέπει να αλλάξει status
     if (this.balance >= targetBalance) {
