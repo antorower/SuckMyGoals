@@ -168,7 +168,7 @@ const Users = async ({ searchParams }) => {
               )}
               <div className="flex justify-between w-full items-center">
                 <div>Last Trade</div>
-                <div>{new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}</div>
+                <div>{new Date(user.lastTradeOpened).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}</div>
               </div>
             </Link>
           ))}

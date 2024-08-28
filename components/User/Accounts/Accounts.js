@@ -3,6 +3,7 @@ import PlusButton from "@/components/General/PlusButton";
 import WaitingPurchaseAccountCard from "./WaitingPurchaseAccountCard";
 import LiveAccountCard from "./LiveAccountCard";
 import NeedUpgradeCard from "./NeedUpgradeCard";
+import WaitingPayoutAccountCard from "./WaitingPayoutAccountCard";
 import Link from "next/link";
 
 const Accounts = async ({ accounts, selectedAccounts, userId, admin, owner }) => {
@@ -92,7 +93,7 @@ const Accounts = async ({ accounts, selectedAccounts, userId, admin, owner }) =>
         {waitingPayoutAccounts && waitingPayoutAccounts.length > 0 ? (
           <div className="flex flex-wrap justify-center gap-4 px-4">
             {waitingPayoutAccounts.map((account) => (
-              <NeedUpgradeCard account={account} key={account._id.toString()} admin={admin} owner={owner} />
+              <WaitingPayoutAccountCard account={account} key={account._id.toString()} admin={admin} owner={owner} />
             ))}
           </div>
         ) : (
