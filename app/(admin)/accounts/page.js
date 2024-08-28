@@ -59,7 +59,9 @@ const Accounts = async ({ searchParams }) => {
       <div className="flex flex-wrap gap-4 p-8 items-start">
         {waitingPurchaseAccounts.map((account) => (
           <div className={`border text-center px-3 py-2 ${account.balance > account.capital ? "border-green-600" : null} ${account.balance < account.capital ? "border-red-600" : null} ${account.balance === account.capital ? "border-gray-800" : null}`} key={account._id}>
-            <div>{account.user.firstName}</div>
+            <Link href={`/user?user=${account.user._id.toString()}`}>
+              {account.user.firstName} {account.user.lastName}
+            </Link>
           </div>
         ))}
       </div>
