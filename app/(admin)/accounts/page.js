@@ -17,10 +17,10 @@ const Accounts = async ({ searchParams }) => {
 
   if (sort === "balance") {
     accounts.sort((a, b) => {
-      if (b.phaseWeight !== a.phaseWeight) {
-        return b.phaseWeight - a.phaseWeight; // Sort by phaseWeight, higher first
-      }
-      return b.balance - a.balance; // If phaseWeight is equal, sort by balance, higher first
+      const aProfitPercentage = ((a.balance - a.capital) * 100) / a.capital;
+      const bProfitPercentage = ((b.balance - b.capital) * 100) / b.capital;
+
+      return bProfitPercentage - aProfitPercentage; // Sort by profit percentage, higher first
     });
   }
 
