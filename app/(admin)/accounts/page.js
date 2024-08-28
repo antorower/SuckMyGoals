@@ -1,9 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { GetAllAccountsLight } from "@/lib/AccountActions";
+import { GetWaitingPurchaseAccounts } from "@/lib/AccountActions";
 
 const Accounts = async ({ searchParams }) => {
   const accounts = await GetAllAccountsLight();
+  const waitingPurchaseAccounts = await GetWaitingPurchaseAccounts();
+  console.log(waitingPurchaseAccounts.length);
 
   const sort = searchParams.sort || "default";
 
@@ -52,6 +55,13 @@ const Accounts = async ({ searchParams }) => {
         <div className="border border-gray-800 px-3 py-2">Winning Accounts: {profitAccountsNumber}</div>
         <div className="border border-gray-800 px-3 py-2">New Accounts: {neutralAccountsNumber}</div>
         <div className="border border-gray-800 px-3 py-2">Lossing Accounts: {lossAccountsNumber}</div>
+      </div>
+      <div className="flex flex-wrap gap-4 p-8 items-start">
+        {waitingPurchaseAccounts.map((account) => (
+          <div className={`border text-center px-3 py-2 ${account.balance > account.capital ? "border-green-600" : null} ${account.balance < account.capital ? "border-red-600" : null} ${account.balance === account.capital ? "border-gray-800" : null}`} key={account._id}>
+            <div>{account.user.firstName}</div>
+          </div>
+        ))}
       </div>
       <div className="flex flex-wrap gap-4 p-8 items-start">
         {accounts.map((account) => (
