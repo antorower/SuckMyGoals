@@ -10,7 +10,7 @@ const LiveAccountCard = async ({ account, admin, owner }) => {
 
   return (
     <Link href={`/account?account=${account._id.toString()}`} className={`border ${openTradeToday ? (closeTradeToday ? "border-purple-500" : "border-green-500") : "border-gray-800"} rounded p-4 flex flex-col items-center justify-center gap-2 max-w-[250px]`}>
-      <div className="text-gray-500">Live Account</div>
+      <div className={`${account.phaseWeight === 1 ? "text-blue-400" : null} ${account.phaseWeight === 2 ? "text-purple-400" : null} ${account.phaseWeight === 3 ? "text-orange-400" : null}`}>Live Account</div>
       <div className="flex w-full justify-between">
         <div className="">{account.company}</div>
         <div>${(account.capital / 1000).toFixed(1)}K</div>
