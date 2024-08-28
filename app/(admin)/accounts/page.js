@@ -35,9 +35,19 @@ const Accounts = async ({ searchParams }) => {
   const profitAccountsNumber = accounts.filter((account) => account.balance > account.capital).length;
   const neutralAccountsNumber = accounts.filter((account) => account.balance === account.capital).length;
   const lossAccountsNumber = accounts.filter((account) => account.balance < account.capital).length;
-
   return (
     <div className="flex flex-col gap-2">
+      <div className="flex flex-wrap gap-3 mx-auto p-8">
+        <Link href="/accounts?sort=balance" className="border border-gray-800 px-3 py-2">
+          Sort by Balance
+        </Link>
+        <Link href="/accounts?sort=trade" className="border border-gray-800 px-3 py-2">
+          Sort by Trade
+        </Link>
+        <Link href="/accounts?sort=company" className="border border-gray-800 px-3 py-2">
+          Sort by Company
+        </Link>
+      </div>
       <div className="flex flex-wrap gap-3 mx-auto p-8">
         <div className="border border-gray-800 px-3 py-2">Winning Accounts: {profitAccountsNumber}</div>
         <div className="border border-gray-800 px-3 py-2">New Accounts: {neutralAccountsNumber}</div>
