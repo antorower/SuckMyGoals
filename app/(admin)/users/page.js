@@ -173,6 +173,7 @@ const Users = async ({ searchParams }) => {
             ))}
           {(!users || users.length === 0) && <div className="animate-pulse">No users found</div>}
         </div>
+        {teams}
       </div>
     );
   }
