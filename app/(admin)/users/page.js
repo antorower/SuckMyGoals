@@ -69,6 +69,87 @@ const Users = async ({ searchParams }) => {
       <SearchBar mode={mode} />
     </div>
   );
+  const teams = (
+    <div className="flex flex-col gap-4 p-4">
+      <div className="font-bold">Ανδρέας Φέσσας</div>
+      <div className="flex flex-wrap gap-2">
+        <div className="border border-gray-800 px-3 py-2 rounded">Μαρίνα Παναγιώτου</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Μόνικα Ελία</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Νέαρχος</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Μωυσής Παπακυριάκου</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Αριστοδήμου</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Κωνσταντίνος Ονησιφόρου</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Κωνσταντίνος Ονουφρίου</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Φάνος Παπακυρικάνου</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Ευριπίδης</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Χαράλαμπος Ρόζου</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Κουλουτσίδης</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Αντιγόνη Κορνηλίου</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Βανέσσα</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Μιχάλης Σεργίδης</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Στυλιανός Θεοδώρου</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Στέφανι Φελλά</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Καραπάνος</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Χριστίνα Μιχαήλ</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Χρήστος Αριστείδου</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Άντρη Ιακώβου</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Χρήστος Σκουφάρης</div>
+      </div>
+      <div className="font-bold">Θάνος Σουβλέρης</div>
+      <div className="flex flex-wrap gap-2">
+        <div className="border border-gray-800 px-3 py-2 rounded">Λάζαρος Χαλκίδης</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Γεωργία Πέτρου</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Μιχάλης Ζεερής</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Δημήτρης Ζερζής</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Πάνος Πάγας</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Ευαγγελία Καλλούδα</div>
+      </div>
+      <hr className="border-none h-[1px] bg-gray-800" />
+      <div className="font-bold">Αντώνης Μαστοράκης</div>
+      <div className="flex flex-wrap gap-2">
+        <div className="border border-gray-800 px-3 py-2 rounded">Δημήτρης Παπαδάκης</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Χριστίνα Μαϊφόσιη</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Θανάσης Αδαμίδης</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Αβραάμ Αβραάμ</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Ναυσικά Μαστραντωνάκη</div>
+      </div>
+      <div className="font-bold">Αβαάμ Κωνσταντίνου</div>
+      <div className="flex flex-wrap gap-2">
+        <div className="border border-gray-800 px-3 py-2 rounded">Χρυσοβαλάντης Δημοσθένους</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Ανδρέας Αδαμίδης</div>
+      </div>
+      <div className="font-bold">Θάνος Χατζηνικολάου</div>
+      <div className="flex flex-wrap gap-2">
+        <div className="border border-gray-800 px-3 py-2 rounded">Θάνος Σουβλέρης</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Παναγιώτης Ρετζέπης</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Δημήτρης Τέρπος</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Δήμος Ναλμπάντης</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Φάνης Ταουκίδης</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Μάρκος Καρασαββίδης</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Στέλιος Κουρτίδης</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Γιαλαντζής</div>
+      </div>
+      <div className="font-bold">Θανάσης Αδαμίδης</div>
+      <div className="flex flex-wrap gap-2">
+        <div className="border border-gray-800 px-3 py-2 rounded">Ανδρέας Παπαδόπουλος</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Ειρήνη Αδαμίδου</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Αθηνά Μιχαελία</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Γιώργος Σωματάκης</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Ανδρεάδης</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Κυριάκος Χαλκίδης</div>
+      </div>
+      <div className="font-bold">Χριστίνα Μαϊφόσιη</div>
+      <div className="flex flex-wrap gap-2">
+        <div className="border border-gray-800 px-3 py-2 rounded">Δημήτρης Ξενοφώντος</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Στέλλα Κόκκινου</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Ελένη Τονγκίδου</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Γεωργία Αναγνώστου</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Αλεξάνδρα Κρητικού</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Πάνος Κρητικός</div>
+        <div className="border border-gray-800 px-3 py-2 rounded">Μιχάλης Θεμιστός</div>
+      </div>
+    </div>
+  );
 
   if (!mode) {
     return (
@@ -141,6 +222,7 @@ const Users = async ({ searchParams }) => {
             </Link>
           ))}
         </div>
+        {teams}
       </div>
     );
   }
@@ -173,6 +255,7 @@ const Users = async ({ searchParams }) => {
             </Link>
           ))}
         </div>
+        {teams}
       </div>
     );
   }
@@ -205,6 +288,7 @@ const Users = async ({ searchParams }) => {
             </Link>
           ))}
         </div>
+        {teams}
       </div>
     );
   }
@@ -230,6 +314,7 @@ const Users = async ({ searchParams }) => {
             </Link>
           ))}
         </div>
+        {teams}
       </div>
     );
   }
