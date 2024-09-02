@@ -17,7 +17,7 @@ const CloseTradeForm = ({ tradeId }) => {
       toast.warn("Please enter a valid integer for the balance");
       return;
     }
-    if (newBalance < 4500 || newBalance > 600000) {
+    if (newBalance < 4300 || newBalance > 600000) {
       toast.warn("Please enter a valid balance");
       return;
     }
