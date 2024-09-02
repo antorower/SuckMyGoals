@@ -67,10 +67,11 @@ const Accounts = async ({ searchParams }) => {
       </div>
       <div className="flex flex-wrap gap-4 p-8 items-start">
         {accounts.map((account) => (
-          <div className={`border text-center px-3 py-2 ${account.balance > account.capital ? "border-green-600" : null} ${account.balance < account.capital ? "border-red-600" : null} ${account.balance === account.capital ? "border-gray-800" : null}`} key={account._id}>
+          <div className={`${account.status === "Review" ? "animate-pulse" : null} border text-center px-3 py-2 ${account.balance > account.capital ? "border-green-600" : null} ${account.balance < account.capital ? "border-red-600" : null} ${account.balance === account.capital ? "border-gray-800" : null}`} key={account._id}>
             <div className={`${account.phaseWeight === 1 ? "text-blue-500" : null} ${account.phaseWeight === 2 ? "text-violet-500" : null} ${account.phaseWeight === 3 ? "text-orange-500" : null}`}>{account.company}</div>
             <div className="text-gray-600">{account.number}</div>
-            <div className="text-gray-600">{account.status}</div>
+            {account.status !== "Review" && <div className="text-gray-600">{account.status}</div>}
+            {account.status === "Review" && <button className="text-gray-600">Remove</button>}
             <div>{account.balance}</div>
           </div>
         ))}
