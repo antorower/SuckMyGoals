@@ -2,8 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { GetAllAccountsLight } from "@/lib/AccountActions";
 import { GetWaitingPurchaseAccounts } from "@/lib/AccountActions";
+import AccountLostButton from "@/components/User/Accounts/AccountLostButton";
+import { currentUser } from "@clerk/nextjs/server";
 
 const Accounts = async ({ searchParams }) => {
+  const clerkUser = await currentUser();
   const accounts = await GetAllAccountsLight();
   const waitingPurchaseAccounts = await GetWaitingPurchaseAccounts();
   console.log(waitingPurchaseAccounts.length);
@@ -71,7 +74,7 @@ const Accounts = async ({ searchParams }) => {
             <div className={`${account.phaseWeight === 1 ? "text-blue-500" : null} ${account.phaseWeight === 2 ? "text-violet-500" : null} ${account.phaseWeight === 3 ? "text-orange-500" : null}`}>{account.company}</div>
             <div className="text-gray-600">{account.number}</div>
             {account.status !== "Review" && <div className="text-gray-600">{account.status}</div>}
-            {account.status === "Review" && <button className="text-gray-600">Remove</button>}
+            {account.status === "Review" && clerkUser.publicMetadata.owner && <AccountLostButton accountId={account._id.toString()} />}
             <div>{account.balance}</div>
           </div>
         ))}
