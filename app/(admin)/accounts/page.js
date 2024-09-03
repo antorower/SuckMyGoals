@@ -15,6 +15,7 @@ const Accounts = async ({ searchParams }) => {
 
   if (sort === "trade") {
     accounts.sort((a, b) => {
+      console.log(a);
       const dateA = new Date(a.eventsTimestamp.firstTradeDate);
       const dateB = new Date(b.eventsTimestamp.firstTradeDate);
       return dateA - dateB; // Ascending order
@@ -68,7 +69,7 @@ const Accounts = async ({ searchParams }) => {
           </div>
         ))}
       </div>
-      <div className="flex flex-wrap gap-4 p-8 items-start">
+      <div className="flex flex-wrap gap-4 p-8 justify-center items-start">
         {accounts.map((account) => (
           <div className={`${account.status === "Review" ? "animate-pulse" : null} border text-center px-3 py-2 ${account.balance > account.capital ? "border-green-600" : null} ${account.balance < account.capital ? "border-red-600" : null} ${account.balance === account.capital ? "border-gray-800" : null}`} key={account._id}>
             <div className={`${account.phaseWeight === 1 ? "text-blue-500" : null} ${account.phaseWeight === 2 ? "text-violet-500" : null} ${account.phaseWeight === 3 ? "text-orange-500" : null}`}>{account.company}</div>
