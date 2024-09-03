@@ -88,7 +88,7 @@ const Trades = async ({ searchParams }) => {
                     {trade.user.firstName} {trade.user.lastName}
                   </div>
                   <div className="flex gap-4 text-sm m-auto">
-                    <div className="text-gray-400">{trade.account.number}</div>
+                    <div className="text-gray-400">{trade?.account?.number}</div>
                     <div>{trade.company}</div>
                     <div className="text-gray-400">{trade.capital}</div>
                   </div>

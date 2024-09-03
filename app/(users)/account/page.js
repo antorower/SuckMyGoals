@@ -38,7 +38,7 @@ const Account = async ({ searchParams }) => {
         </Link>
       </div>
       {account.number && <div className="flex justify-center items-center w-full p-2 text-3xl font-bold gap-4">{account.number}</div>}
-      <div className="flex justify-center text-gray-400 text-sm border-y border-gray-800 p-3 text-center">{account.note}</div>
+      {/*<div className="flex justify-center text-gray-400 text-sm border-y border-gray-800 p-3 text-center">{account.note}</div>*/}
       <div className={`flex justify-center px-4 gap-2 items-center ${account.status === "WaitingPurchase" && "text-2xl font-semibold"}`}>
         <div>{account.company}</div>
         <div>-</div>
