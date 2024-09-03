@@ -39,6 +39,10 @@ const Accounts = async ({ searchParams }) => {
     });
   }
 
+  if (sort === "default") {
+    accounts.sort((a, b) => b.phaseWeight - a.phaseWeight);
+  }
+
   const phase1 = accounts.filter((account) => account.phaseWeight === 1);
   const phase2 = accounts.filter((account) => account.phaseWeight === 2);
   const phase3 = accounts.filter((account) => account.phaseWeight === 3);
@@ -46,9 +50,10 @@ const Accounts = async ({ searchParams }) => {
   const profitAccountsNumber = accounts.filter((account) => account.balance > account.capital).length;
   const neutralAccountsNumber = accounts.filter((account) => account.balance === account.capital).length;
   const lossAccountsNumber = accounts.filter((account) => account.balance < account.capital).length;
+
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex flex-wrap gap-3 mx-auto p-2">
+      <div className="flex flex-wrap gap-3 mx-auto p-4">
         <Link href="/accounts?sort=balance" className="border border-gray-800 px-3 py-2">
           Sort by Balance
         </Link>
@@ -58,13 +63,16 @@ const Accounts = async ({ searchParams }) => {
         <Link href="/accounts?sort=company" className="border border-gray-800 px-3 py-2">
           Sort by Company
         </Link>
+        <Link href="/accounts?sort=default" className="border border-gray-800 px-3 py-2">
+          Sort by Phase
+        </Link>
       </div>
-      <div className="flex flex-wrap gap-3 mx-auto p-8">
+      <div className="flex flex-wrap gap-3 mx-auto p-2">
         <div className="border border-gray-800 px-3 py-2">Winning Accounts: {profitAccountsNumber}</div>
         <div className="border border-gray-800 px-3 py-2">New Accounts: {neutralAccountsNumber}</div>
         <div className="border border-gray-800 px-3 py-2">Lossing Accounts: {lossAccountsNumber}</div>
       </div>
-      <div className="flex flex-wrap gap-3 mx-auto p-8">
+      <div className="flex flex-wrap gap-3 mx-auto p-2">
         <div className="border border-gray-800 px-3 py-2">Phase 1: {phase1.length}</div>
         <div className="border border-gray-800 px-3 py-2">Phase 2: {phase2.length}</div>
         <div className="border border-gray-800 px-3 py-2">Phase 3: {phase3.length}</div>
