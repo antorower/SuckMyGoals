@@ -27,7 +27,7 @@ const Accounts = async ({ searchParams }) => {
       const aProfitPercentage = ((a.balance - a.capital) * 100) / a.capital;
       const bProfitPercentage = ((b.balance - b.capital) * 100) / b.capital;
 
-      return bProfitPercentage - aProfitPercentage; // Sort by profit percentage, higher first
+      return bProfitPercentage - aProfitPercentage;
     });
   }
 
@@ -38,6 +38,10 @@ const Accounts = async ({ searchParams }) => {
       return 0;
     });
   }
+
+  const phase1 = accounts.filter((account) => account.phaseWeight === 1);
+  const phase2 = accounts.filter((account) => account.phaseWeight === 2);
+  const phase3 = accounts.filter((account) => account.phaseWeight === 3);
 
   const profitAccountsNumber = accounts.filter((account) => account.balance > account.capital).length;
   const neutralAccountsNumber = accounts.filter((account) => account.balance === account.capital).length;
@@ -59,6 +63,11 @@ const Accounts = async ({ searchParams }) => {
         <div className="border border-gray-800 px-3 py-2">Winning Accounts: {profitAccountsNumber}</div>
         <div className="border border-gray-800 px-3 py-2">New Accounts: {neutralAccountsNumber}</div>
         <div className="border border-gray-800 px-3 py-2">Lossing Accounts: {lossAccountsNumber}</div>
+      </div>
+      <div className="flex flex-wrap gap-3 mx-auto p-8">
+        <div className="border border-gray-800 px-3 py-2">Phase 1: {phase1.length}</div>
+        <div className="border border-gray-800 px-3 py-2">Phase 2: {phase2.length}</div>
+        <div className="border border-gray-800 px-3 py-2">Phase 3: {phase3.length}</div>
       </div>
       <div className="flex flex-wrap gap-4 p-8 items-start">
         {waitingPurchaseAccounts.map((account) => (
