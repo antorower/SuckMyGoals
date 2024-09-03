@@ -75,6 +75,7 @@ const Accounts = async ({ searchParams }) => {
             <div className="text-gray-600">{account.number}</div>
             {account.status !== "Review" && <div className="text-gray-600">{account.status}</div>}
             {account.status === "Review" && clerkUser.publicMetadata.owner && <AccountLostButton accountId={account._id.toString()} />}
+            <div>{new Date(account.eventsTimestamp.firstTradeDate).toLocaleDateString("el-GR")}</div>
             <div>{account.balance}</div>
           </div>
         ))}
