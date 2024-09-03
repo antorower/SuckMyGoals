@@ -48,7 +48,7 @@ const Accounts = async ({ searchParams }) => {
   const lossAccountsNumber = accounts.filter((account) => account.balance < account.capital).length;
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex flex-wrap gap-3 mx-auto p-8">
+      <div className="flex flex-wrap gap-3 mx-auto p-2">
         <Link href="/accounts?sort=balance" className="border border-gray-800 px-3 py-2">
           Sort by Balance
         </Link>
@@ -69,7 +69,7 @@ const Accounts = async ({ searchParams }) => {
         <div className="border border-gray-800 px-3 py-2">Phase 2: {phase2.length}</div>
         <div className="border border-gray-800 px-3 py-2">Phase 3: {phase3.length}</div>
       </div>
-      <div className="flex flex-wrap gap-4 p-8 items-start">
+      <div className="flex flex-wrap gap-4 p-8 justify-center items-start">
         {waitingPurchaseAccounts.map((account) => (
           <div className={`border text-center px-3 py-2 ${account.balance > account.capital ? "border-green-600" : null} ${account.balance < account.capital ? "border-red-600" : null} ${account.balance === account.capital ? "border-gray-800" : null}`} key={account._id}>
             <Link href={`/user?user=${account.user._id.toString()}`}>
