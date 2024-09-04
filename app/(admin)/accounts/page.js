@@ -51,6 +51,11 @@ const Accounts = async ({ searchParams }) => {
   const neutralAccountsNumber = accounts.filter((account) => account.balance === account.capital).length;
   const lossAccountsNumber = accounts.filter((account) => account.balance < account.capital).length;
 
+  const fundingPipsAccounts = accounts.filter((account) => account.company === "Funding Pips");
+  const fundedNextAccounts = accounts.filter((account) => account.company === "Funded Next");
+  const the5ersAccounts = accounts.filter((account) => account.company === "The5ers");
+  const fundedNextStellarAccounts = accounts.filter((account) => account.company === "Funded Next Stellar");
+
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-wrap gap-3 mx-auto p-4">
@@ -76,6 +81,12 @@ const Accounts = async ({ searchParams }) => {
         <div className="border border-gray-800 px-3 py-2">Challenge: {phase1.length}</div>
         <div className="border border-gray-800 px-3 py-2">Verification: {phase2.length}</div>
         <div className="border border-gray-800 px-3 py-2">Funded: {phase3.length}</div>
+      </div>
+      <div className="flex flex-wrap gap-3 mx-auto p-2">
+        <div className="border border-gray-800 px-3 py-2">Funding Pips: {fundingPipsAccounts.length}</div>
+        <div className="border border-gray-800 px-3 py-2">Funded Next: {fundedNextAccounts.length}</div>
+        <div className="border border-gray-800 px-3 py-2">Funded Next Stellar: {fundedNextStellarAccounts.length}</div>
+        <div className="border border-gray-800 px-3 py-2">The5ers: {the5ersAccounts.length}</div>
       </div>
       <div className="flex flex-wrap gap-4 p-8 justify-center items-start">
         {waitingPurchaseAccounts.map((account) => (
