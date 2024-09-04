@@ -15,7 +15,7 @@ const LiveAccountCard = async ({ account, admin, owner }) => {
         <div className="">{account.company}</div>
         <div>${(account.capital / 1000).toFixed(1)}K</div>
       </div>
-      <div className="text-xs text-center m-auto text-gray-500">{account.note}</div>
+      <div className="text-xs text-center m-auto text-gray-500">-</div> {/*account.note*/}
       <div className="font-semibold text-xl">{account.number}</div>
       <div className="font-semibold text-gray-400">${Intl.NumberFormat("de-DE").format(account.balance)}</div>
     </Link>
