@@ -99,14 +99,30 @@ const Accounts = async ({ searchParams }) => {
       </div>
       <div className="flex flex-wrap gap-4 p-8 justify-center items-start">
         {accounts.map((account) => (
-          <Link href={`/account?account=${account._id.toString()}`} className={`${account.status === "Review" ? "animate-pulse" : null} border text-center px-3 py-2 ${account.balance > account.capital ? "border-green-600" : null} ${account.balance < account.capital ? "border-red-600" : null} ${account.balance === account.capital ? "border-gray-800" : null}`} key={account._id}>
-            <div className={`${account.phaseWeight === 1 ? "text-blue-500" : null} ${account.phaseWeight === 2 ? "text-violet-500" : null} ${account.phaseWeight === 3 ? "text-orange-500" : null}`}>{account.company}</div>
-            <div className="text-gray-600">{account.number}</div>
-            {account.status !== "Review" && <div className="text-gray-600">{account.status}</div>}
-            {account.status === "Review" && clerkUser.publicMetadata.owner && <AccountLostButton accountId={account._id.toString()} />}
-            <div>{new Date(account.eventsTimestamp.firstTradeDate).toLocaleDateString("el-GR")}</div>
-            <div>{account.balance}</div>
-          </Link>
+          <>
+            {account.status !== "Review" && (
+              <Link href={`/account?account=${account._id.toString()}`} className={`${account.status === "Review" ? "animate-pulse" : null} border text-center px-3 py-2 ${account.balance > account.capital ? "border-green-600" : null} ${account.balance < account.capital ? "border-red-600" : null} ${account.balance === account.capital ? "border-gray-800" : null}`} key={account._id}>
+                <div className={`${account.phaseWeight === 1 ? "text-blue-500" : null} ${account.phaseWeight === 2 ? "text-violet-500" : null} ${account.phaseWeight === 3 ? "text-orange-500" : null}`}>{account.company}</div>
+                <div className="text-gray-600">{account.number}</div>
+                {account.status !== "Review" && <div className="text-gray-600">{account.status}</div>}
+                {account.status === "Review" && clerkUser.publicMetadata.owner && <AccountLostButton accountId={account._id.toString()} />}
+                <div>{new Date(account.eventsTimestamp.firstTradeDate).toLocaleDateString("el-GR")}</div>
+                <div>{account.balance}</div>
+              </Link>
+            )}
+            {account.status === "Review" && (
+              <div className="animate-pulse border text-center px-3 py-2 border-yellow-400" key={account._id}>
+                <div className={`${account.phaseWeight === 1 ? "text-blue-500" : null} ${account.phaseWeight === 2 ? "text-violet-500" : null} ${account.phaseWeight === 3 ? "text-orange-500" : null}`}>{account.company}</div>
+                <Link href={`/account?account=${account._id.toString()}`} className="text-gray-600">
+                  {account.number}
+                </Link>
+                {account.status !== "Review" && <div className="text-gray-600">{account.status}</div>}
+                {account.status === "Review" && clerkUser.publicMetadata.owner && <AccountLostButton accountId={account._id.toString()} />}
+                <div>{new Date(account.eventsTimestamp.firstTradeDate).toLocaleDateString("el-GR")}</div>
+                <div>{account.balance}</div>
+              </div>
+            )}
+          </>
         ))}
       </div>
     </div>
