@@ -107,6 +107,7 @@ const Accounts = async ({ searchParams }) => {
                 {account.status !== "Review" && <div className="text-gray-600">{account.status}</div>}
                 {account.status === "Review" && clerkUser.publicMetadata.owner && <AccountLostButton accountId={account._id.toString()} />}
                 <div>{new Date(account.eventsTimestamp.firstTradeDate).toLocaleDateString("el-GR")}</div>
+                {account.eventsTimestamp.targetReachedDate && <div>{new Date(account.eventsTimestamp.targetReachedDate).toLocaleDateString("el-GR")}</div>}
                 <div>{account.balance}</div>
               </Link>
             )}
@@ -119,7 +120,6 @@ const Accounts = async ({ searchParams }) => {
                 {account.status !== "Review" && <div className="text-gray-600">{account.status}</div>}
                 {account.status === "Review" && clerkUser.publicMetadata.owner && <AccountLostButton accountId={account._id.toString()} />}
                 <div>{new Date(account.eventsTimestamp.firstTradeDate).toLocaleDateString("el-GR")}</div>
-                {account.eventsTimestamp.targetReachedDate && <div>{new Date(account.eventsTimestamp.targetReachedDate).toLocaleDateString("el-GR")}</div>}
                 <div>{account.balance}</div>
               </div>
             )}
