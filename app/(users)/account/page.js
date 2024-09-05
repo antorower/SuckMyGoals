@@ -56,14 +56,6 @@ const Account = async ({ searchParams }) => {
       {account.status == "WaitingPurchase" && (
         <div className="w-full m-auto flex flex-col gap-2 justify-center border-y border-gray-800 p-4">
           <div className="font-semibold m-auto">Instructions</div>
-          <div className="text-sm text-gray-400 text-center">
-            {new Date(account.createdAt).toLocaleDateString("el-GR", {
-              day: "numeric",
-              month: "numeric",
-              year: "numeric",
-            })}
-          </div>
-
           <div className="text-sm text-gray-400 text-center">{company.waitingPurchaseInstructions}</div>
         </div>
       )}
