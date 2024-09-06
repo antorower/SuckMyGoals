@@ -90,7 +90,11 @@ const Account = async ({ searchParams }) => {
       {account.status === "NeedUpgrade" && <NewAccountNumberForm oldAccountId={account._id.toString()} />}
       {(account.status === "WaitingPayout" || account.status === "PayoutRequestDone" || account.status === "MoneySended") && <PayoutPhase account={account} admin={admin} owner={owner} />}
       {(account.status === "Review" || account.status === "Lost") && !clerkUser.publicMetadata.owner && <div className="m-auto font-bold animate-pulse text-red-600">Your account {account.number} lost</div>}
-      {(account.status === "Review" || account.status === "Lost") && clerkUser.publicMetadata.owner && <div className="m-auto font-bold animate-pulse text-red-600">Your account {account.number} lost</div>}
+      {(account.status === "Review" || account.status === "Lost") && clerkUser.publicMetadata.owner && (
+        <div className="m-auto font-bold animate-pulse text-red-600">
+          <LiveAccountDetails account={account} admin={admin} owner={owner} accountCorrect={accountCorrect} />
+        </div>
+      )}
     </div>
   );
 };
