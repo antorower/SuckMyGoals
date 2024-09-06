@@ -33,9 +33,12 @@ const Accounts = async ({ searchParams }) => {
 
   if (sort === "company") {
     accounts.sort((a, b) => {
+      // Πρώτη ταξινόμηση βάσει εταιρείας
       if (a.company < b.company) return -1;
       if (a.company > b.company) return 1;
-      return 0;
+
+      // Δεύτερη ταξινόμηση βάσει balance (μεγαλύτερο balance πάνω)
+      return b.balance - a.balance;
     });
   }
 
