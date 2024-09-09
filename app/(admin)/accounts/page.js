@@ -4,12 +4,12 @@ import { GetAllAccountsLight } from "@/lib/AccountActions";
 import { GetWaitingPurchaseAccounts } from "@/lib/AccountActions";
 import AccountLostButton from "@/components/User/Accounts/AccountLostButton";
 import { currentUser } from "@clerk/nextjs/server";
+import ManageAccountTrades from "@/components/ManageAccountTrades";
 
 const Accounts = async ({ searchParams }) => {
   const clerkUser = await currentUser();
   const accounts = await GetAllAccountsLight();
   const waitingPurchaseAccounts = await GetWaitingPurchaseAccounts();
-  console.log(waitingPurchaseAccounts.length);
 
   const sort = searchParams.sort || "default";
 
@@ -111,11 +111,12 @@ const Accounts = async ({ searchParams }) => {
                 {account.status === "Review" && clerkUser.publicMetadata.owner && <AccountLostButton accountId={account._id.toString()} />}
                 <div>{new Date(account.eventsTimestamp.firstTradeDate).toLocaleDateString("el-GR")}</div>
                 {account.eventsTimestamp.targetReachedDate && <div>{new Date(account.eventsTimestamp.targetReachedDate).toLocaleDateString("el-GR")}</div>}
-                <div>{account.balance}</div>
+                <div>{account.balance}</div>        
+                <ManageAccountTrades accountId={account._id.toString()} disabled={account.tradesDisabled}/>        
               </Link>
             )}
             {account.status === "Review" && (
-              <div className="animate-pulse border text-center px-3 py-2 border-yellow-400" key={account._id}>
+              <div className={`animate-pulse border text-center px-3 py-2 border-yellow-400`} key={account._id}>
                 <div className={`${account.phaseWeight === 1 ? "text-blue-500" : null} ${account.phaseWeight === 2 ? "text-violet-500" : null} ${account.phaseWeight === 3 ? "text-orange-500" : null}`}>{account.company}</div>
                 <Link href={`/account?account=${account._id.toString()}`} className="text-gray-600">
                   {account.number}

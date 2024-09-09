@@ -8,6 +8,7 @@ const AccountSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+    tradesDisabled: Boolean,
     company: String,
     number: {
       type: String,
@@ -291,6 +292,18 @@ AccountSchema.methods.addActivity = function (title, description) {
 AccountSchema.methods.updatePayoutRequestDate = async function (day, month) {
   this.payoutRequestDate.day = day;
   this.payoutRequestDate.month = month;
+  await this.save();
+  return;
+};
+
+AccountSchema.methods.disableTrades = async function () {
+  this.tradesDisabled = true;
+  await this.save();
+  return;
+};
+
+AccountSchema.methods.enableTrades = async function () {
+  this.tradesDisabled = false;
   await this.save();
   return;
 };
