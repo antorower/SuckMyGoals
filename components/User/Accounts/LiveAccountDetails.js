@@ -9,7 +9,7 @@ const LiveAccountDetails = async ({ account, admin, owner, accountCorrect }) => 
   const sortedActivities = account.activities.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime)).slice(0, 10); // Limit to the first 4 activities
 
   const openTrade = await GetOpenTradeOfAccount(account._id.toString());
-  const isTradeToday = new Date(openTrade.trade.openTime).toDateString() === new Date().toDateString();
+  const isTradeToday = new Date(openTrade?.trade?.openTime).toDateString() === new Date().toDateString();
 
   return (
     <div className="flex flex-col gap-4 sm:flex-row p-4">
