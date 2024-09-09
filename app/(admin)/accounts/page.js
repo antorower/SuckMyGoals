@@ -112,7 +112,7 @@ const Accounts = async ({ searchParams }) => {
                 <div>{new Date(account.eventsTimestamp.firstTradeDate).toLocaleDateString("el-GR")}</div>
                 {account.eventsTimestamp.targetReachedDate && <div>{new Date(account.eventsTimestamp.targetReachedDate).toLocaleDateString("el-GR")}</div>}
                 <div>{account.balance}</div>        
-                <ManageAccountTrades accountId={account._id.toString()} disabled={account.tradesDisabled}/>        
+                {account.company === "Funded Next" && <ManageAccountTrades accountId={account._id.toString()} disabled={account.tradesDisabled}/>}        
               </Link>
             )}
             {account.status === "Review" && (
