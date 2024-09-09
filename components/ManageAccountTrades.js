@@ -30,7 +30,7 @@ const ManageAccountTrades = ({ accountId, disabled}) => {
   }
 
   return (
-<div className={`flex flex-col w-full ${disablet ? "text-red-500" : "text-green-500"}`}>
+<div className={`flex flex-col w-full ${disabled ? "text-red-500" : "text-green-500"}`}>
                   <button onClick={disableTrades}> Disable </button>
                   <button onClick={enableTrades}> Enable </button>
                 </div>
