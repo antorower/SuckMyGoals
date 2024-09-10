@@ -20,7 +20,7 @@ const PayoutPhase = ({ account, admin, owner }) => {
         {isPayoutDay && <div className={`flex bg-blue-600 justify-center p-4 text-2xl font-bold ${isPayoutDay ? "animate-pulse" : null}`}>Payday</div>}
         {isPayoutDay && (admin || owner) && <PayoutRequestDoneButton accountId={account._id.toString()} />}
         <div className="flex flex-col items-center gap-2 justify-center">
-          <div className="m-auto text-gray-400 font-medium">When is your payout scheduled?</div>
+          <div className="m-auto text-gray-400 font-medium">When is your payout day?</div>
           <DayPicker accountId={account._id.toString()} savedDay={account?.payoutRequestDate?.day} savedMonth={account?.payoutRequestDate?.month} />
         </div>
       </div>
