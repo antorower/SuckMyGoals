@@ -9,6 +9,7 @@ import ManageAccountTrades from "@/components/ManageAccountTrades";
 const Accounts = async ({ searchParams }) => {
   const clerkUser = await currentUser();
   const accounts = await GetAllAccountsLight();
+  const numberOfLiveAccounts = accounts.filter((account) => account.status === "Live");
   const waitingPurchaseAccounts = await GetWaitingPurchaseAccounts();
 
   const sort = searchParams.sort || "default";
@@ -85,6 +86,7 @@ const Accounts = async ({ searchParams }) => {
         <div className="border border-gray-800 px-3 py-2">Challenge: {phase1.length}</div>
         <div className="border border-gray-800 px-3 py-2">Verification: {phase2.length}</div>
         <div className="border border-gray-800 px-3 py-2">Funded: {phase3.length}</div>
+        <div className="border border-gray-800 px-3 py-2">Live: {numberOfLiveAccounts.length}</div>
       </div>
       <div className="flex flex-wrap gap-3 mx-auto p-2">
         <div className="border border-gray-800 px-3 py-2">Funding Pips: {fundingPipsAccounts.length}</div>
