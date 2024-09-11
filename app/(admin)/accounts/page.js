@@ -12,6 +12,7 @@ const Accounts = async ({ searchParams }) => {
   const waitingPurchaseAccounts = await GetWaitingPurchaseAccounts();
 
   const sort = searchParams.sort || "default";
+  const manageAccountActivation = searchParams.manager;
 
   if (sort === "trade") {
     accounts.sort((a, b) => {
@@ -111,8 +112,8 @@ const Accounts = async ({ searchParams }) => {
                 {account.status === "Review" && clerkUser.publicMetadata.owner && <AccountLostButton accountId={account._id.toString()} />}
                 <div>{new Date(account.eventsTimestamp.firstTradeDate).toLocaleDateString("el-GR")}</div>
                 {account.eventsTimestamp.targetReachedDate && <div>{new Date(account.eventsTimestamp.targetReachedDate).toLocaleDateString("el-GR")}</div>}
-                <div>{account.balance}</div>        
-                {account.company === "Funded Next" && <ManageAccountTrades accountId={account._id.toString()} disabled={account.tradesDisabled}/>}        
+                <div>{account.balance}</div>
+                {account.company === "Funded Next" && manageAccountActivation && <ManageAccountTrades accountId={account._id.toString()} disabled={account.tradesDisabled} />}
               </Link>
             )}
             {account.status === "Review" && (
