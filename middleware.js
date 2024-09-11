@@ -10,7 +10,8 @@ export default clerkMiddleware(async (auth, req) => {
     if (pathname === "/not-found") return;
 
     // Παίρνω όλο το object του clerk user
-    const { userId } = auth();
+    const { userId, sessionClaims } = auth();
+    console.log("SC", sessionClaims);
     let clerkUser;
     if (userId) {
       clerkUser = await clerkClient.users.getUser(userId);

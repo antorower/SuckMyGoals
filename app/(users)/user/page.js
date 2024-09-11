@@ -12,10 +12,14 @@ import PlusButton from "@/components/General/PlusButton";
 import { GetDaySchedule } from "@/lib/AppData";
 import Link from "next/link";
 import { GetCurrentTime } from "@/lib/AppData";
+import { auth } from "@clerk/nextjs/server";
 
 const User = async ({ searchParams }) => {
   const daySchedule = GetDaySchedule();
   const dayNote = daySchedule?.note;
+
+  const { sessionClaims } = auth();
+  console.log("FROM SERVER COMP", sessionClaims);
 
   const clerkUser = await currentUser();
   if (!clerkUser) notFound();
