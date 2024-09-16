@@ -267,7 +267,7 @@ AccountSchema.methods.getTakeProfit = function (pair, stopLossPoints, lots) {
   const remainingBalance = targetBalance - this.balance;
   let takeProfit = {};
   if (remainingBalance < maxTakeProfitAmount) {
-    if (remainingBalance / this.capital < 0.002) {
+    if (remainingBalance / this.capital < 0.004) {
       const newLots = lots / 3;
       takeProfit.amount = Math.round(remainingBalance + pairObj.spread * newLots * pairObj.pointValue + company.commissionFactor * newLots * pairObj.pointValue + Settings.Strategy.extraTakeProfitPoints * newLots * pairObj.pointValue);
       takeProfit.lowTp = true;
