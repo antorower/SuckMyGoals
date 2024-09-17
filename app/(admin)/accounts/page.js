@@ -107,7 +107,7 @@ const Accounts = async ({ searchParams }) => {
         {accounts.map((account) => (
           <>
             {account.status !== "Review" && !manageAccountActivation && (
-              <Link href={`/account?account=${account._id.toString()}`} className={`${account.status === "Review" ? "animate-pulse" : null} border text-center px-3 py-2 ${account.balance > account.capital ? "border-green-600" : null} ${account.balance < account.capital ? "border-red-600" : null} ${account.balance === account.capital ? "border-gray-800" : null}`} key={account._id}>
+              <Link href={`/account?account=${account._id.toString()}`} className={`border text-center px-3 py-2 ${account.balance > account.capital ? "border-green-600" : null} ${account.balance < account.capital ? "border-red-600" : null} ${account.balance === account.capital ? "border-gray-800" : null}`} key={account._id}>
                 <div className={`${account.phaseWeight === 1 ? "text-blue-500" : null} ${account.phaseWeight === 2 ? "text-violet-500" : null} ${account.phaseWeight === 3 ? "text-orange-500" : null}`}>{account.company}</div>
                 <div className="text-gray-600">{account.number}</div>
                 {account.status !== "Review" && <div className="text-gray-600">{account.status}</div>}
@@ -118,7 +118,7 @@ const Accounts = async ({ searchParams }) => {
               </Link>
             )}
             {account.status !== "Review" && manageAccountActivation && account.phaseWeight === 1 && account.company === "Funded Next" && (
-              <div className={`border ${account.tradesDisabled ? "animate-pulse" : null} text-center px-3 py-2 ${account.balance > account.capital ? "border-green-600" : null} ${account.balance < account.capital ? "border-red-600" : null} ${account.balance === account.capital ? "border-gray-800" : null}`} key={account._id}>
+              <div className={`border ${true ? "animate-pulse" : null} text-center px-3 py-2 ${account.balance > account.capital ? "border-green-600" : null} ${account.balance < account.capital ? "border-red-600" : null} ${account.balance === account.capital ? "border-gray-800" : null}`} key={account._id}>
                 <div className={`${account.phaseWeight === 1 ? "text-blue-500" : null} ${account.phaseWeight === 2 ? "text-violet-500" : null} ${account.phaseWeight === 3 ? "text-orange-500" : null}`}>{account.company}</div>
                 <div className="text-gray-600">{account.number}</div>
                 {account.status !== "Review" && <div className="text-gray-600">{account.status}</div>}
