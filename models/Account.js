@@ -101,7 +101,6 @@ AccountSchema.pre("save", async function (next) {
         break;
       }
     }
-    console.log(this.metadata.balanceCategory);
 
     // Κάθε φορά που αλλάζει το balance ελέγχεται αν το account πρέπει να αλλάξει status
     if (this.balance >= targetBalance) {

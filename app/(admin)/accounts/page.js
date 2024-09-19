@@ -17,7 +17,6 @@ const Accounts = async ({ searchParams }) => {
 
   if (sort === "trade") {
     accounts.sort((a, b) => {
-      console.log(a);
       const dateA = new Date(a.eventsTimestamp.firstTradeDate);
       const dateB = new Date(b.eventsTimestamp.firstTradeDate);
       return dateA - dateB; // Ascending order

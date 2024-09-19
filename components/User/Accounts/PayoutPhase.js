@@ -4,7 +4,7 @@ import DayPicker from "./DayPicker";
 import PayoutRequestDoneButton from "./PayoutRequestDoneButton";
 import MoneySendedButton from "./MoneySendedButton";
 
-const PayoutPhase = ({ account, admin, owner }) => {
+const PayoutPhase = ({ account, admin, owner, clerkId, mongoId }) => {
   const day = account?.payoutRequestDate?.day;
   const month = account?.payoutRequestDate?.month;
 
@@ -28,7 +28,7 @@ const PayoutPhase = ({ account, admin, owner }) => {
   }
 
   if (account.status === "PayoutRequestDone") {
-    return <MoneySendedButton accountId={account._id.toString()} />;
+    return <MoneySendedButton accountId={account._id.toString()} clerkId={clerkId} mongoId={mongoId} />;
   }
 
   if (account.status === "MoneySended") {

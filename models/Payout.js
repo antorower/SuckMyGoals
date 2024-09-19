@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 const PayoutSchema = new mongoose.Schema(
   {
     user: {
@@ -8,9 +10,12 @@ const PayoutSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Account",
     },
+    accountBalance: Number,
     accountProfit: Number,
     payoutAmount: Number,
     userProfit: Number,
+    refund: Number,
+    totalUserShare: Number,
     leadersProfit: Number,
     netProfit: Number,
     status: {
@@ -32,31 +37,46 @@ const PayoutSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-PayoutSchema.methods.createNewPayout = async function (userId, accountId, payoutAmount) {
-  this.user = userId;
+PayoutSchema.methods.createNewPayout = async function (mongoId, accountId, accountBalance, payoutAmount, profitShare, refund, finalAmount) {
+  this.user = mongoId;
   this.account = accountId;
   await this.save();
 
-  await this.populate("user").populate("account");
+  await this.populate(["user", "account"]);
 
   const beneficiaries = this.user.beneficiaries || [];
   const leadersSplit = beneficiaries.reduce((total, beneficiary) => {
     return total + beneficiary.percentage;
   }, 0);
 
-  this.accountProfit = this.account.balance - this.account.capital;
+  this.accountBalance = accountBalance;
+  this.accountProfit = accountBalance - this.account.capital;
   this.payoutAmount = payoutAmount;
-  this.userProfit = payoutAmount * Payments.userSplit;
-  this.leadersProfit = payoutAmount * leadersSplit;
-  this.netProfit = payoutAmount - payoutAmount * Payments.userSplit - payoutAmount * leadersSplit;
+  this.userProfit = profitShare;
+  this.refund = refund;
+  this.totalUserShare = finalAmount;
+  this.leadersProfit = (payoutAmount * leadersSplit) / 100;
+  this.netProfit = payoutAmount - this.totalUserShare - (payoutAmount * leadersSplit) / 100;
   this.status = "Pending";
   await this.save();
+
+  await this.user.addProfits(profitShare * -1, mongoId, accountId);
   return;
 };
 
 PayoutSchema.methods.acceptPayout = async function () {
-  await this.populate("user").populate("account");
-  await this.account.resetAfterPayoutSended();
+  await this.populate(["user", "account"]);
+
+  if (!this.account || !this.user) {
+    throw new Error("Account or User not found.");
+  }
+
+  try {
+    await this.account.resetAfterPayoutSended();
+  } catch (error) {
+    throw new Error(`Failed to reset account: ${error.message}`);
+  }
+
   this.status = "Accepted";
   this.acceptedDate = new Date();
 
@@ -64,9 +84,23 @@ PayoutSchema.methods.acceptPayout = async function () {
   const beneficiaries = this.user.beneficiaries || [];
 
   const profitPromises = beneficiaries.map(async (beneficiary) => {
-    const profit = payoutAmount * (beneficiary.percentage / 100);
+    const percentage = beneficiary.percentage || 0;
+    const profit = payoutAmount * (percentage / 100);
+
+    if (isNaN(profit)) {
+      this.rejectedUserPayments.push({
+        user: beneficiary.user,
+        profit: profit,
+        reason: "Invalid percentage for beneficiary.",
+      });
+      return;
+    }
+
     try {
       const user = await User.findById(beneficiary.user);
+      if (!user) {
+        throw new Error("User not found.");
+      }
       await user.addProfits(profit, this.user._id, this.account._id);
     } catch (error) {
       console.error(`Failed to update profits for beneficiary ${beneficiary.user}:`, error);
@@ -77,6 +111,7 @@ PayoutSchema.methods.acceptPayout = async function () {
       });
     }
   });
+
   await Promise.allSettled(profitPromises);
   await this.save();
   return;

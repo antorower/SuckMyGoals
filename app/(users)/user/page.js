@@ -19,7 +19,6 @@ const User = async ({ searchParams }) => {
   const dayNote = daySchedule?.note;
 
   const { sessionClaims } = auth();
-  console.log("FROM SERVER COMP", sessionClaims);
 
   const clerkUser = await currentUser();
   if (!clerkUser) notFound();

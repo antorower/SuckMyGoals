@@ -1,6 +1,5 @@
 import Link from "next/link";
 const LiveAccountCard = async ({ account, admin, owner }) => {
-  console.log("Last Trade", account.lastTrade);
   const lastTradeExist = Boolean(account.lastTrade);
 
   // Έλεγχος αν το account.lastTrade έχει openTime σήμερα

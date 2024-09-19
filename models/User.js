@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { clerkClient } from "@clerk/nextjs/server";
+import Account from "./Account";
 
 const UserSchema = new mongoose.Schema({
   clerkId: {
@@ -82,6 +83,19 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  profitsProgress: [
+    {
+      amount: Number,
+      user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+      account: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Account",
+      },
+    },
+  ],
   accepted: {
     type: Boolean,
     default: false,
