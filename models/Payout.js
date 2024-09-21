@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import User from "./User";
 
 const PayoutSchema = new mongoose.Schema(
   {
@@ -14,7 +15,10 @@ const PayoutSchema = new mongoose.Schema(
     accountProfit: Number,
     payoutAmount: Number,
     userProfit: Number,
-    refund: Number,
+    refund: {
+      type: Number,
+      default: 0,
+    },
     totalUserShare: Number,
     leadersProfit: Number,
     netProfit: Number,
@@ -67,6 +71,8 @@ PayoutSchema.methods.createNewPayout = async function (mongoId, accountId, accou
 PayoutSchema.methods.acceptPayout = async function () {
   await this.populate(["user", "account"]);
 
+  console.log(this);
+
   if (!this.account || !this.user) {
     throw new Error("Account or User not found.");
   }
@@ -81,7 +87,9 @@ PayoutSchema.methods.acceptPayout = async function () {
   this.acceptedDate = new Date();
 
   const payoutAmount = this.payoutAmount;
+  console.log(payoutAmount);
   const beneficiaries = this.user.beneficiaries || [];
+  console.log(beneficiaries);
 
   const profitPromises = beneficiaries.map(async (beneficiary) => {
     const percentage = beneficiary.percentage || 0;

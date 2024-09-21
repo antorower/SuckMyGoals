@@ -8,6 +8,10 @@ const AccountSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+    investor: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
     tradesDisabled: Boolean,
     company: String,
     number: {
@@ -75,6 +79,7 @@ const AccountSchema = new mongoose.Schema(
         },
       },
     },
+    investment: Boolean,
   },
   { timestamps: true }
 );
@@ -119,7 +124,7 @@ AccountSchema.pre("save", async function (next) {
 });
 
 // PROGRESS METHODS
-AccountSchema.methods.accountInitialization = async function (userId, companyName, capital) {
+AccountSchema.methods.accountInitialization = async function (userId, companyName, capital, investment, investor) {
   const company = Settings.GetCompany(companyName);
   this.user = userId;
   this.company = companyName;
@@ -130,6 +135,8 @@ AccountSchema.methods.accountInitialization = async function (userId, companyNam
   this.status = "WaitingPurchase";
   this.note = `Funds has been sent to your wallet. Purchase your ${companyName} account of $${this.capital.toLocaleString("de-DE")} and save your account number`;
   this.addActivity("Funds sent", "Funds send for buying new account");
+  this.investment = investment;
+  if (investment) this.investor = investor;
   await this.save();
 
   await this.populate("user");

@@ -85,7 +85,7 @@ const Account = async ({ searchParams }) => {
       )}
       {/* INSTRUCTIONS */}
       {dayNote && dayNote !== "" && <div className="text-2xl flex justify-center animate-pulse bg-red-600 w-full p-4 font-semibold">{dayNote}</div>}
-      {account.status === "WaitingPurchase" && (admin || owner) && <AccountNumberForm accountId={account._id.toString()} admin={admin} owner={owner} />}
+      {account.status === "WaitingPurchase" && (admin || owner) && <AccountNumberForm accountId={account._id.toString()} admin={admin} owner={owner} investment={account.investment} />}
       {account.status === "Live" && <LiveAccountDetails account={account} admin={admin} owner={owner} accountCorrect={accountCorrect} />}
       {account.status === "NeedUpgrade" && <NewAccountNumberForm oldAccountId={account._id.toString()} />}
       {(account.status === "WaitingPayout" || account.status === "PayoutRequestDone" || account.status === "MoneySended") && <PayoutPhase account={account} admin={admin} owner={owner} clerkId={clerkUser.id} mongoId={account.user._id.toString()} />}

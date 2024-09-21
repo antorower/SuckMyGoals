@@ -94,6 +94,7 @@ const UserSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Account",
       },
+      description: String,
     },
   ],
   accepted: {
@@ -181,9 +182,9 @@ UserSchema.methods.removeActiveCompany = async function (companyName) {
   return;
 };
 
-UserSchema.methods.addProfits = async function (profit, userId, accountId) {
+UserSchema.methods.addProfits = async function (profit, userId, accountId, description) {
   this.profits = this.profits + profit;
-  this.profitsProgress.push({ amount: profit, user: userId, account: accountId });
+  this.profitsProgress.push({ amount: profit, user: userId, account: accountId, description: description });
   await this.save();
   return;
 };

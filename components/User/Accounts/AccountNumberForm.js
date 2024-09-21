@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { RegisterAccountNumber } from "@/lib/AccountActions";
 import { useRouter } from "next/navigation";
 
-const AccountNumberForm = ({ accountId }) => {
+const AccountNumberForm = ({ accountId, investment }) => {
   const [accountNumber, setAccountNumber] = useState("");
   const router = useRouter();
 
@@ -13,7 +13,7 @@ const AccountNumberForm = ({ accountId }) => {
       toast.warn("Please set the new account number");
       return;
     }
-    const response = await RegisterAccountNumber(accountId, accountNumber);
+    const response = await RegisterAccountNumber(accountId, accountNumber, investment);
     if (response.error) {
       toast.error(response.message);
     } else {

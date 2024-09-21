@@ -23,8 +23,8 @@ const PayoutRequestDoneButton = ({ accountId }) => {
   };
 
   return (
-    <button onClick={RequestDone} disabled={!isButtonActive} className="bg-red-600 p-4 m-auto rounded font-semibold">
-      Payout Request Submitted
+    <button onClick={RequestDone} disabled={!isButtonActive} className="bg-red-600 p-4 m-auto rounded font-semibold text-wrap">
+      ΜΗΝ ΜΕ ΠΑΤΗΣΕΙΣ ΤΩΡΑ! ΠΑΤΗΣΕ ΜΕ ΤΗΝ ΗΜΕΡΑ ΠΟΥ ΘΑ ΚΑΝΕΙΣ PAYOUT REQUEST ΣΤΗΝ ΕΤΑΙΡΙΑ!
     </button>
   );
 };

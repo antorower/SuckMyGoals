@@ -13,6 +13,7 @@ import { GetDaySchedule } from "@/lib/AppData";
 import Link from "next/link";
 import { GetCurrentTime } from "@/lib/AppData";
 import { auth } from "@clerk/nextjs/server";
+import Image from "next/image";
 
 const User = async ({ searchParams }) => {
   const daySchedule = GetDaySchedule();
@@ -36,6 +37,12 @@ const User = async ({ searchParams }) => {
   return (
     <div className="flex w-full flex-col gap-4">
       <Name firstName={user.firstName} lastName={user.lastName} userId={user._id.toString()} />
+      {user.profits > 0 && (
+        <div className="pb-4 text-lg font-bold border-b border-gray-800 w-full flex justify-center items-center">
+          <Image src="/dollar.svg" width={24} height={24} />
+          <div>{user.profits}</div>
+        </div>
+      )}
       {admin && <AddLeader userId={user._id.toString()} leaders={JSON.stringify(user.leaders)} />}
       {admin && (
         <Link className="flex justify-end px-4 text-xs" href={`/user/beneficiaries?user=${user._id.toString()}`}>

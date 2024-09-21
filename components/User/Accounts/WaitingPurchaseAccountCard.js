@@ -16,7 +16,8 @@ const WaitingPurchaseAccountCard = async ({ account, admin, owner }) => {
         <div className="">{account.company}</div>
         <div>${account.capital / 1000}K</div>
       </div>
-      <div className="text-xs text-center m-auto text-gray-500">{account.note}</div>
+      {!account.investment && <div className="text-xs text-center m-auto text-gray-500">{account.note}</div>}
+      {account.investment && <div className="text-sm text-center m-auto text-gray-500">Βuy your account with your own money and declare the number on our page</div>}
     </Link>
   );
 };

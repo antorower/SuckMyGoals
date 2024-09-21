@@ -10,6 +10,7 @@ const UsersMainMenu = async () => {
       {(clerkUser.publicMetadata.owner || clerkUser.publicMetadata.leader) && <MenuItem link="/team" icon="team" size={35} alt="team-icon" border={true} />}
       {clerkUser.id === "user_2kuThd9M40qCdvbHSbFY0sd8AlS" && <MenuItem link="/trades" icon="trades" size={38} alt="trades-icon" border={true} />}
       <MenuItem link="/calendar" icon="calendar" size={30} alt="calendar-icon" border={clerkUser.publicMetadata.owner} />
+      <MenuItem link="/accounts?sort=default" icon="accounts" size={32} alt="pairs-icon" border={true} />
       {clerkUser.publicMetadata.owner && <MenuItem link="/users" icon="admin" size={30} alt="admin-icon" border={true} />}
     </div>
   );

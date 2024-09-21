@@ -4,7 +4,7 @@ import { AccountInitialization } from "@/lib/AccountActions";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
-const CreateNewAccountForm = ({ userId, companyName }) => {
+const CreateNewAccountForm = ({ userIdAccountOwner, companyName, isAdmin, investor }) => {
   const router = useRouter();
   const [capital, setCapital] = useState("");
 
@@ -14,12 +14,35 @@ const CreateNewAccountForm = ({ userId, companyName }) => {
       return;
     }
 
-    const response = await AccountInitialization(userId, companyName, capital);
+    if (companyName === "Funded Next Stellar") {
+      if (parseFloat(capital) !== 6000) {
+        toast.warn("Capital is wrong");
+        return;
+      }
+    }
+    if (companyName === "The5ers") {
+      if (parseFloat(capital) !== 5000) {
+        toast.warn("Capital is wrong");
+        return;
+      }
+    }
+    if (companyName === "Funding Pips") {
+      if (parseFloat(capital) !== 5000) {
+        toast.warn("Capital is wrong");
+        return;
+      }
+    }
+    if (companyName === "Funded Next") {
+      toast.warn("Company is wrong, choose Funded Next Stellar instead");
+      return;
+    }
+
+    const response = await AccountInitialization(userIdAccountOwner, companyName, capital, !isAdmin, investor);
     if (response.error) {
       toast.error(response.message);
     } else {
       toast.success("Account created successfully");
-      router.push(`/user?user=${userId}`);
+      router.push(`/user?user=${userIdAccountOwner}`);
     }
   };
 

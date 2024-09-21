@@ -5,12 +5,14 @@ import { GetWaitingPurchaseAccounts } from "@/lib/AccountActions";
 import AccountLostButton from "@/components/User/Accounts/AccountLostButton";
 import { currentUser } from "@clerk/nextjs/server";
 import ManageAccountTrades from "@/components/ManageAccountTrades";
+import { auth } from "@clerk/nextjs/server";
 
 const Accounts = async ({ searchParams }) => {
   const clerkUser = await currentUser();
   const accounts = await GetAllAccountsLight();
   const numberOfLiveAccounts = accounts.filter((account) => account.status === "Live");
   const waitingPurchaseAccounts = await GetWaitingPurchaseAccounts();
+  const { sessionClaims } = auth();
 
   const sort = searchParams.sort || "default";
   const manageAccountActivation = searchParams.manager;
@@ -62,89 +64,153 @@ const Accounts = async ({ searchParams }) => {
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex flex-wrap gap-3 mx-auto p-4">
-        <Link href="/accounts?sort=balance" className="border border-gray-800 px-3 py-2">
-          Sort by Balance
-        </Link>
-        <Link href="/accounts?sort=trade" className="border border-gray-800 px-3 py-2">
-          Sort by Trade
-        </Link>
-        <Link href="/accounts?sort=company" className="border border-gray-800 px-3 py-2">
-          Sort by Company
-        </Link>
-        <Link href="/accounts?sort=default" className="border border-gray-800 px-3 py-2">
-          Sort by Phase
-        </Link>
-      </div>
-      <div className="flex flex-wrap gap-3 mx-auto p-2">
-        <div className="border border-gray-800 px-3 py-2">Winning Accounts: {profitAccountsNumber}</div>
-        <div className="border border-gray-800 px-3 py-2">New Accounts: {neutralAccountsNumber}</div>
-        <div className="border border-gray-800 px-3 py-2">Lossing Accounts: {lossAccountsNumber}</div>
-      </div>
-      <div className="flex flex-wrap gap-3 mx-auto p-2">
-        <div className="border border-gray-800 px-3 py-2">Challenge: {phase1.length}</div>
-        <div className="border border-gray-800 px-3 py-2">Verification: {phase2.length}</div>
-        <div className="border border-gray-800 px-3 py-2">Funded: {phase3.length}</div>
-        <div className="border border-gray-800 px-3 py-2">Live: {numberOfLiveAccounts.length}</div>
-      </div>
-      <div className="flex flex-wrap gap-3 mx-auto p-2">
-        <div className="border border-gray-800 px-3 py-2">Funding Pips: {fundingPipsAccounts.length}</div>
-        <div className="border border-gray-800 px-3 py-2">Funded Next: {fundedNextAccounts.length}</div>
-        <div className="border border-gray-800 px-3 py-2">Funded Next Stellar: {fundedNextStellarAccounts.length}</div>
-        <div className="border border-gray-800 px-3 py-2">The5ers: {the5ersAccounts.length}</div>
-      </div>
-      <div className="flex flex-wrap gap-4 p-8 justify-center items-start">
-        {waitingPurchaseAccounts.map((account) => (
-          <div className={`border text-center px-3 py-2 ${account.balance > account.capital ? "border-green-600" : null} ${account.balance < account.capital ? "border-red-600" : null} ${account.balance === account.capital ? "border-gray-800" : null}`} key={account._id}>
-            <Link href={`/user?user=${account.user._id.toString()}`}>
-              {account.user.firstName} {account.user.lastName}
+      {sessionClaims.metadata.owner && (
+        <>
+          <div className="flex flex-wrap gap-3 mx-auto p-4">
+            <Link href="/accounts?sort=balance" className="border border-gray-800 px-3 py-2">
+              Sort by Balance
+            </Link>
+            <Link href="/accounts?sort=trade" className="border border-gray-800 px-3 py-2">
+              Sort by Trade
+            </Link>
+            <Link href="/accounts?sort=company" className="border border-gray-800 px-3 py-2">
+              Sort by Company
+            </Link>
+            <Link href="/accounts?sort=default" className="border border-gray-800 px-3 py-2">
+              Sort by Phase
             </Link>
           </div>
-        ))}
-      </div>
-      <div className="flex flex-wrap gap-4 p-8 justify-center items-start">
-        {accounts.map((account) => (
-          <>
-            {account.status !== "Review" && !manageAccountActivation && (
-              <Link href={`/account?account=${account._id.toString()}`} className={`border text-center px-3 py-2 ${account.balance > account.capital ? "border-green-600" : null} ${account.balance < account.capital ? "border-red-600" : null} ${account.balance === account.capital ? "border-gray-800" : null}`} key={account._id}>
-                <div className={`${account.phaseWeight === 1 ? "text-blue-500" : null} ${account.phaseWeight === 2 ? "text-violet-500" : null} ${account.phaseWeight === 3 ? "text-orange-500" : null}`}>{account.company}</div>
-                <div className="text-gray-600">{account.number}</div>
-                {account.status !== "Review" && <div className="text-gray-600">{account.status}</div>}
-                {account.status === "Review" && clerkUser.publicMetadata.owner && <AccountLostButton accountId={account._id.toString()} />}
-                <div>{new Date(account.eventsTimestamp.firstTradeDate).toLocaleDateString("el-GR")}</div>
-                {account.eventsTimestamp.targetReachedDate && <div>{new Date(account.eventsTimestamp.targetReachedDate).toLocaleDateString("el-GR")}</div>}
-                <div>{account.balance}</div>
-              </Link>
-            )}
-            {account.status !== "Review" && manageAccountActivation && account.phaseWeight === 1 && account.company === "Funded Next" && (
-              <div className={`border ${account.tradesDisabled ? "animate-pulse" : null} text-center px-3 py-2 ${account.balance > account.capital ? "border-green-600" : null} ${account.balance < account.capital ? "border-red-600" : null} ${account.balance === account.capital ? "border-gray-800" : null}`} key={account._id}>
-                <div className={`${account.phaseWeight === 1 ? "text-blue-500" : null} ${account.phaseWeight === 2 ? "text-violet-500" : null} ${account.phaseWeight === 3 ? "text-orange-500" : null}`}>{account.company}</div>
-                <Link href={`/account?account=${account._id.toString()}`} className="text-gray-600">
-                  {account.number}
+          <div className="flex flex-wrap gap-3 mx-auto p-2">
+            <div className="border border-gray-800 px-3 py-2">Winning Accounts: {profitAccountsNumber}</div>
+            <div className="border border-gray-800 px-3 py-2">New Accounts: {neutralAccountsNumber}</div>
+            <div className="border border-gray-800 px-3 py-2">Lossing Accounts: {lossAccountsNumber}</div>
+          </div>
+          <div className="flex flex-wrap gap-3 mx-auto p-2">
+            <div className="border border-gray-800 px-3 py-2">Challenge: {phase1.length}</div>
+            <div className="border border-gray-800 px-3 py-2">Verification: {phase2.length}</div>
+            <div className="border border-gray-800 px-3 py-2">Funded: {phase3.length}</div>
+            <div className="border border-gray-800 px-3 py-2">Live: {numberOfLiveAccounts.length}</div>
+          </div>
+          <div className="flex flex-wrap gap-3 mx-auto p-2">
+            <div className="border border-gray-800 px-3 py-2">Funding Pips: {fundingPipsAccounts.length}</div>
+            <div className="border border-gray-800 px-3 py-2">Funded Next: {fundedNextAccounts.length}</div>
+            <div className="border border-gray-800 px-3 py-2">Funded Next Stellar: {fundedNextStellarAccounts.length}</div>
+            <div className="border border-gray-800 px-3 py-2">The5ers: {the5ersAccounts.length}</div>
+          </div>
+          <div className="flex flex-wrap gap-4 p-8 justify-center items-start">
+            {waitingPurchaseAccounts.map((account) => (
+              <div className={`border text-center px-3 py-2 ${account.balance > account.capital ? "border-green-600" : null} ${account.balance < account.capital ? "border-red-600" : null} ${account.balance === account.capital ? "border-gray-800" : null}`} key={account._id}>
+                <Link href={`/user?user=${account.user._id.toString()}`}>
+                  {account.user.firstName} {account.user.lastName}
                 </Link>
-                {account.status !== "Review" && <div className="text-gray-600">{account.status}</div>}
-                {account.status === "Review" && clerkUser.publicMetadata.owner && <AccountLostButton accountId={account._id.toString()} />}
-                <div>{new Date(account.eventsTimestamp.firstTradeDate).toLocaleDateString("el-GR")}</div>
-                {account.eventsTimestamp.targetReachedDate && <div>{new Date(account.eventsTimestamp.targetReachedDate).toLocaleDateString("el-GR")}</div>}
-                <div>{account.balance}</div>
-                <ManageAccountTrades accountId={account._id.toString()} disabled={account.tradesDisabled} />
               </div>
-            )}
-            {account.status === "Review" && (
-              <div className={`animate-pulse border text-center px-3 py-2 border-yellow-400`} key={account._id}>
-                <div className={`${account.phaseWeight === 1 ? "text-blue-500" : null} ${account.phaseWeight === 2 ? "text-violet-500" : null} ${account.phaseWeight === 3 ? "text-orange-500" : null}`}>{account.company}</div>
-                <Link href={`/account?account=${account._id.toString()}`} className="text-gray-600">
-                  {account.number}
-                </Link>
-                {account.status !== "Review" && <div className="text-gray-600">{account.status}</div>}
-                {account.status === "Review" && clerkUser.publicMetadata.owner && <AccountLostButton accountId={account._id.toString()} />}
-                <div>{new Date(account.eventsTimestamp.firstTradeDate).toLocaleDateString("el-GR")}</div>
-                <div>{account.balance}</div>
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-4 p-8 justify-center items-start">
+            {accounts.map((account) => (
+              <>
+                {account.status !== "Review" && !manageAccountActivation && (
+                  <Link href={`/account?account=${account._id.toString()}`} className={`border text-center px-3 py-2 ${account.balance > account.capital ? "border-green-600" : null} ${account.balance < account.capital ? "border-red-600" : null} ${account.balance === account.capital ? "border-gray-800" : null}`} key={account._id}>
+                    <div className={`${account.phaseWeight === 1 ? "text-blue-500" : null} ${account.phaseWeight === 2 ? "text-violet-500" : null} ${account.phaseWeight === 3 ? "text-orange-500" : null}`}>{account.company}</div>
+                    <div className="text-gray-600">{account.number}</div>
+                    {account.status !== "Review" && <div className="text-gray-600">{account.status}</div>}
+                    {account.status === "Review" && clerkUser.publicMetadata.owner && <AccountLostButton accountId={account._id.toString()} />}
+                    <div>{new Date(account.eventsTimestamp.firstTradeDate).toLocaleDateString("el-GR")}</div>
+                    {account.eventsTimestamp.targetReachedDate && <div>{new Date(account.eventsTimestamp.targetReachedDate).toLocaleDateString("el-GR")}</div>}
+                    <div>{account.balance}</div>
+                  </Link>
+                )}
+                {account.status !== "Review" && manageAccountActivation && account.phaseWeight === 1 && account.company === "Funded Next" && (
+                  <div className={`border ${account.tradesDisabled ? "animate-pulse" : null} text-center px-3 py-2 ${account.balance > account.capital ? "border-green-600" : null} ${account.balance < account.capital ? "border-red-600" : null} ${account.balance === account.capital ? "border-gray-800" : null}`} key={account._id}>
+                    <div className={`${account.phaseWeight === 1 ? "text-blue-500" : null} ${account.phaseWeight === 2 ? "text-violet-500" : null} ${account.phaseWeight === 3 ? "text-orange-500" : null}`}>{account.company}</div>
+                    <Link href={`/account?account=${account._id.toString()}`} className="text-gray-600">
+                      {account.number}
+                    </Link>
+                    {account.status !== "Review" && <div className="text-gray-600">{account.status}</div>}
+                    {account.status === "Review" && clerkUser.publicMetadata.owner && <AccountLostButton accountId={account._id.toString()} />}
+                    <div>{new Date(account.eventsTimestamp.firstTradeDate).toLocaleDateString("el-GR")}</div>
+                    {account.eventsTimestamp.targetReachedDate && <div>{new Date(account.eventsTimestamp.targetReachedDate).toLocaleDateString("el-GR")}</div>}
+                    <div>{account.balance}</div>
+                    <ManageAccountTrades accountId={account._id.toString()} disabled={account.tradesDisabled} />
+                  </div>
+                )}
+                {account.status === "Review" && (
+                  <div className={`animate-pulse border text-center px-3 py-2 border-yellow-400`} key={account._id}>
+                    <div className={`${account.phaseWeight === 1 ? "text-blue-500" : null} ${account.phaseWeight === 2 ? "text-violet-500" : null} ${account.phaseWeight === 3 ? "text-orange-500" : null}`}>{account.company}</div>
+                    <Link href={`/account?account=${account._id.toString()}`} className="text-gray-600">
+                      {account.number}
+                    </Link>
+                    {account.status !== "Review" && <div className="text-gray-600">{account.status}</div>}
+                    {account.status === "Review" && clerkUser.publicMetadata.owner && <AccountLostButton accountId={account._id.toString()} />}
+                    <div>{new Date(account.eventsTimestamp.firstTradeDate).toLocaleDateString("el-GR")}</div>
+                    <div>{account.balance}</div>
+                  </div>
+                )}
+              </>
+            ))}
+          </div>
+        </>
+      )}
+      {!sessionClaims.metadata.owner && (
+        <>
+          <div className="flex flex-wrap gap-3 mx-auto p-4">
+            <Link href="/accounts?sort=balance" className="border border-gray-800 px-3 py-2">
+              Sort by Balance
+            </Link>
+            <Link href="/accounts?sort=trade" className="border border-gray-800 px-3 py-2">
+              Sort by Trade
+            </Link>
+            <Link href="/accounts?sort=company" className="border border-gray-800 px-3 py-2">
+              Sort by Company
+            </Link>
+            <Link href="/accounts?sort=default" className="border border-gray-800 px-3 py-2">
+              Sort by Phase
+            </Link>
+          </div>
+          <div className="flex flex-wrap gap-3 mx-auto p-2">
+            <div className="border border-gray-800 px-3 py-2">Winning Accounts: {profitAccountsNumber}</div>
+            <div className="border border-gray-800 px-3 py-2">New Accounts: {neutralAccountsNumber}</div>
+            <div className="border border-gray-800 px-3 py-2">Lossing Accounts: {lossAccountsNumber}</div>
+          </div>
+          <div className="flex flex-wrap gap-3 mx-auto p-2">
+            <div className="border border-gray-800 px-3 py-2">Challenge: {phase1.length}</div>
+            <div className="border border-gray-800 px-3 py-2">Verification: {phase2.length}</div>
+            <div className="border border-gray-800 px-3 py-2">Funded: {phase3.length}</div>
+            <div className="border border-gray-800 px-3 py-2">Live: {numberOfLiveAccounts.length}</div>
+          </div>
+          <div className="flex flex-wrap gap-3 mx-auto p-2">
+            <div className="border border-gray-800 px-3 py-2">Funding Pips: {fundingPipsAccounts.length}</div>
+            <div className="border border-gray-800 px-3 py-2">Funded Next: {fundedNextAccounts.length}</div>
+            <div className="border border-gray-800 px-3 py-2">Funded Next Stellar: {fundedNextStellarAccounts.length}</div>
+            <div className="border border-gray-800 px-3 py-2">The5ers: {the5ersAccounts.length}</div>
+          </div>
+          <div className="flex flex-wrap gap-4 p-8 justify-center items-start">
+            {waitingPurchaseAccounts.map((account) => (
+              <div className={`border text-center px-3 py-2 ${account.balance > account.capital ? "border-green-600" : null} ${account.balance < account.capital ? "border-red-600" : null} ${account.balance === account.capital ? "border-gray-800" : null}`} key={account._id}>
+                <div>
+                  {account.user.firstName} {account.user.lastName}
+                </div>
               </div>
-            )}
-          </>
-        ))}
-      </div>
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-4 p-8 justify-center items-start">
+            {accounts.map((account) => (
+              <>
+                {account.status !== "Review" && !manageAccountActivation && (
+                  <div className={`border text-center px-3 py-2 ${account.balance > account.capital ? "border-green-600" : null} ${account.balance < account.capital ? "border-red-600" : null} ${account.balance === account.capital ? "border-gray-800" : null}`} key={account._id}>
+                    <div className={`${account.phaseWeight === 1 ? "text-blue-500" : null} ${account.phaseWeight === 2 ? "text-violet-500" : null} ${account.phaseWeight === 3 ? "text-orange-500" : null}`}>{account.company}</div>
+                    {account.status !== "Review" && <div className="text-gray-600">{account.status}</div>}
+                    {account.status === "Review" && clerkUser.publicMetadata.owner && <AccountLostButton accountId={account._id.toString()} />}
+                    <div>{new Date(account.eventsTimestamp.firstTradeDate).toLocaleDateString("el-GR")}</div>
+                    {account.eventsTimestamp.targetReachedDate && <div>{new Date(account.eventsTimestamp.targetReachedDate).toLocaleDateString("el-GR")}</div>}
+                    <div>{account.balance}</div>
+                  </div>
+                )}
+              </>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 };

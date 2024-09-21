@@ -6,9 +6,6 @@ import { useRouter } from "next/navigation";
 import { GetUserProfitsByClerkId } from "@/lib/UserActions";
 
 const MoneySendedButton = ({ accountId, clerkId, mongoId }) => {
-  console.log(accountId);
-  console.log(clerkId);
-  console.log(mongoId);
   const [accountBalance, setAccountBalance] = useState("");
   const [payoutAmount, setPayoutAmount] = useState(0);
   const [profitShare, setProfitShare] = useState(0);

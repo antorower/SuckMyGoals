@@ -3,10 +3,14 @@ import Link from "next/link";
 import Image from "next/image";
 import CreateNewAccountForm from "@/components/User/Accounts/CreateNewAccountForm";
 import { GetUserActiveCompanies } from "@/lib/UserActions";
+import { auth } from "@clerk/nextjs/server";
 
-const Accounts = async ({ searchParams }) => {
+const AddAccount = async ({ searchParams }) => {
   const userId = searchParams.user;
   if (!userId) notFound();
+  const { sessionClaims } = auth();
+  const isAdmin = sessionClaims.metadata.owner;
+  const investor = sessionClaims.metadata.mongoId;
 
   const allActiveCompanies = await GetUserActiveCompanies(userId);
 
@@ -15,7 +19,7 @@ const Accounts = async ({ searchParams }) => {
 
   return (
     <div className="flex gap-4 items-center justify-center flex-grow h-full p-4">
-      {selectedCompany && <CreateNewAccountForm userId={userId} companyName={selectedCompany} />}
+      {selectedCompany && <CreateNewAccountForm userIdAccountOwner={userId} companyName={selectedCompany} isAdmin={isAdmin} investor={investor} />}
       {!selectedCompany &&
         allActiveCompanies &&
         allActiveCompanies.length > 0 &&
@@ -31,4 +35,4 @@ const Accounts = async ({ searchParams }) => {
   );
 };
 
-export default Accounts;
+export default AddAccount;
