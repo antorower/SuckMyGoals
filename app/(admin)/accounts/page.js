@@ -3,12 +3,10 @@ import Link from "next/link";
 import { GetAllAccountsLight } from "@/lib/AccountActions";
 import { GetWaitingPurchaseAccounts } from "@/lib/AccountActions";
 import AccountLostButton from "@/components/User/Accounts/AccountLostButton";
-import { currentUser } from "@clerk/nextjs/server";
 import ManageAccountTrades from "@/components/ManageAccountTrades";
 import { auth } from "@clerk/nextjs/server";
 
 const Accounts = async ({ searchParams }) => {
-  const clerkUser = await currentUser();
   const accounts = await GetAllAccountsLight();
   const numberOfLiveAccounts = accounts.filter((account) => account.status === "Live");
   const waitingPurchaseAccounts = await GetWaitingPurchaseAccounts();
@@ -114,7 +112,7 @@ const Accounts = async ({ searchParams }) => {
                     <div className={`${account.phaseWeight === 1 ? "text-blue-500" : null} ${account.phaseWeight === 2 ? "text-violet-500" : null} ${account.phaseWeight === 3 ? "text-orange-500" : null}`}>{account.company}</div>
                     <div className="text-gray-600">{account.number}</div>
                     {account.status !== "Review" && <div className="text-gray-600">{account.status}</div>}
-                    {account.status === "Review" && clerkUser.publicMetadata.owner && <AccountLostButton accountId={account._id.toString()} />}
+                    {account.status === "Review" && sessionClaims.metadata.owner && <AccountLostButton accountId={account._id.toString()} />}
                     <div>{new Date(account.eventsTimestamp.firstTradeDate).toLocaleDateString("el-GR")}</div>
                     {account.eventsTimestamp.targetReachedDate && <div>{new Date(account.eventsTimestamp.targetReachedDate).toLocaleDateString("el-GR")}</div>}
                     <div>{account.balance}</div>
@@ -127,7 +125,7 @@ const Accounts = async ({ searchParams }) => {
                       {account.number}
                     </Link>
                     {account.status !== "Review" && <div className="text-gray-600">{account.status}</div>}
-                    {account.status === "Review" && clerkUser.publicMetadata.owner && <AccountLostButton accountId={account._id.toString()} />}
+                    {account.status === "Review" && sessionClaims.metadata.owner && <AccountLostButton accountId={account._id.toString()} />}
                     <div>{new Date(account.eventsTimestamp.firstTradeDate).toLocaleDateString("el-GR")}</div>
                     {account.eventsTimestamp.targetReachedDate && <div>{new Date(account.eventsTimestamp.targetReachedDate).toLocaleDateString("el-GR")}</div>}
                     <div>{account.balance}</div>
@@ -141,7 +139,7 @@ const Accounts = async ({ searchParams }) => {
                       {account.number}
                     </Link>
                     {account.status !== "Review" && <div className="text-gray-600">{account.status}</div>}
-                    {account.status === "Review" && clerkUser.publicMetadata.owner && <AccountLostButton accountId={account._id.toString()} />}
+                    {account.status === "Review" && sessionClaims.metadata.owner && <AccountLostButton accountId={account._id.toString()} />}
                     <div>{new Date(account.eventsTimestamp.firstTradeDate).toLocaleDateString("el-GR")}</div>
                     <div>{account.balance}</div>
                   </div>
@@ -200,7 +198,7 @@ const Accounts = async ({ searchParams }) => {
                   <div className={`border text-center px-3 py-2 ${account.balance > account.capital ? "border-green-600" : null} ${account.balance < account.capital ? "border-red-600" : null} ${account.balance === account.capital ? "border-gray-800" : null}`} key={account._id}>
                     <div className={`${account.phaseWeight === 1 ? "text-blue-500" : null} ${account.phaseWeight === 2 ? "text-violet-500" : null} ${account.phaseWeight === 3 ? "text-orange-500" : null}`}>{account.company}</div>
                     {account.status !== "Review" && <div className="text-gray-600">{account.status}</div>}
-                    {account.status === "Review" && clerkUser.publicMetadata.owner && <AccountLostButton accountId={account._id.toString()} />}
+                    {account.status === "Review" && sessionClaims.metadata.owner && <AccountLostButton accountId={account._id.toString()} />}
                     <div>{new Date(account.eventsTimestamp.firstTradeDate).toLocaleDateString("el-GR")}</div>
                     {account.eventsTimestamp.targetReachedDate && <div>{new Date(account.eventsTimestamp.targetReachedDate).toLocaleDateString("el-GR")}</div>}
                     <div>{account.balance}</div>

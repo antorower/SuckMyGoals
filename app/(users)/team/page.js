@@ -2,20 +2,20 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { GetAllLeaderUsers } from "@/lib/UserActions";
 import { GetAllFullUsers } from "@/lib/UserActions";
-import { currentUser } from "@clerk/nextjs/server";
 import { UserButton } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 
 const Team = async () => {
-  const clerkUser = await currentUser();
-  if (!clerkUser) notFound();
+  const { userId, sessionClaims } = auth();
+  if (!userId) notFound();
 
-  if (!clerkUser.publicMetadata.owner && !clerkUser.publicMetadata.leader) notFound();
+  if (!sessionClaims.metadata.owner && !sessionClaims.metadata.leader) notFound();
 
   let users;
-  if (clerkUser.publicMetadata.owner) {
+  if (sessionClaims.metadata.owner) {
     users = await GetAllFullUsers();
   } else {
-    users = await GetAllLeaderUsers(clerkUser.publicMetadata.mongoId);
+    users = await GetAllLeaderUsers(sessionClaims.metadata.mongoId);
   }
   if (!users || users.length === 0) return <div className="animate-pulse p-4">Team members not found...</div>;
 

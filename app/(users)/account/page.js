@@ -8,11 +8,11 @@ import NewAccountNumberForm from "@/components/User/Accounts/NewAccountNumberFor
 import LiveAccountDetails from "@/components/User/Accounts/LiveAccountDetails";
 import { GetDaySchedule } from "@/lib/AppData";
 import { UserButton } from "@clerk/nextjs";
-import { currentUser } from "@clerk/nextjs/server";
 import PayoutPhase from "@/components/User/Accounts/PayoutPhase";
+import { auth } from "@clerk/nextjs/server";
 
 const Account = async ({ searchParams }) => {
-  const clerkUser = await currentUser();
+  const { userId, sessionClaims } = auth();
 
   const daySchedule = GetDaySchedule();
   const dayNote = daySchedule?.note;
@@ -22,8 +22,8 @@ const Account = async ({ searchParams }) => {
   if (!urlAccountId) notFound();
   const account = await GetAccountById(urlAccountId);
   if (!account || account.error) notFound();
-  const admin = clerkUser.publicMetadata.owner;
-  const owner = clerkUser.publicMetadata.mongoId === account.user._id.toString();
+  const admin = sessionClaims.metadata.owner;
+  const owner = sessionClaims.metadata.mongoId === account.user._id.toString();
 
   const company = Companies.find((company) => company.name === account.company);
 
@@ -88,9 +88,9 @@ const Account = async ({ searchParams }) => {
       {account.status === "WaitingPurchase" && (admin || owner) && <AccountNumberForm accountId={account._id.toString()} admin={admin} owner={owner} investment={account.investment} />}
       {account.status === "Live" && <LiveAccountDetails account={account} admin={admin} owner={owner} accountCorrect={accountCorrect} />}
       {account.status === "NeedUpgrade" && <NewAccountNumberForm oldAccountId={account._id.toString()} />}
-      {(account.status === "WaitingPayout" || account.status === "PayoutRequestDone" || account.status === "MoneySended") && <PayoutPhase account={account} admin={admin} owner={owner} clerkId={clerkUser.id} mongoId={account.user._id.toString()} />}
-      {(account.status === "Review" || account.status === "Lost") && !clerkUser.publicMetadata.owner && <div className="m-auto font-bold animate-pulse text-red-600">Your account {account.number} lost</div>}
-      {(account.status === "Review" || account.status === "Lost") && clerkUser.publicMetadata.owner && (
+      {(account.status === "WaitingPayout" || account.status === "PayoutRequestDone" || account.status === "MoneySended") && <PayoutPhase account={account} admin={admin} owner={owner} clerkId={userId} mongoId={account.user._id.toString()} />}
+      {(account.status === "Review" || account.status === "Lost") && !sessionClaims.metadata.owner && <div className="m-auto font-bold animate-pulse text-red-600">Your account {account.number} lost</div>}
+      {(account.status === "Review" || account.status === "Lost") && sessionClaims.metadata.owner && (
         <div className="m-auto font-bold animate-pulse text-red-600">
           <LiveAccountDetails account={account} admin={admin} owner={owner} accountCorrect={accountCorrect} />
         </div>

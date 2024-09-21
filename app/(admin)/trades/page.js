@@ -1,12 +1,12 @@
 import { GetTradesByDay } from "@/lib/TradeActions";
 import { notFound } from "next/navigation";
-import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
+import { auth } from "@clerk/nextjs/server";
 
 const Trades = async ({ searchParams }) => {
-  const clerkUser = await currentUser();
+  const { userId, sessionClaims } = auth();
 
-  if (!clerkUser || (!clerkUser.publicMetadata.owner && clerkUser.id !== "user_2kuThd9M40qCdvbHSbFY0sd8AlS")) notFound();
+  if (!userId || (!sessionClaims.metadata.owner && userId !== "user_2kuThd9M40qCdvbHSbFY0sd8AlS")) notFound();
 
   const today = new Date();
   const day = searchParams.day || today.getDate();

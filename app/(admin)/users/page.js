@@ -7,11 +7,11 @@ import { GetUsersWithNote } from "@/lib/UserActions";
 import { GetUsersWithProfits } from "@/lib/UserActions";
 import { GetAllFullUsers } from "@/lib/UserActions";
 import { UserButton } from "@clerk/nextjs";
-import { currentUser } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 
 const Users = async ({ searchParams }) => {
-  const clerkUser = await currentUser();
-  if (!clerkUser || !clerkUser.publicMetadata.owner) notFound();
+  const { userId, sessionClaims } = auth();
+  if (!userId || !sessionClaims.metadata.owner) notFound();
 
   const searchString = searchParams.search;
   const mode = searchParams.mode;

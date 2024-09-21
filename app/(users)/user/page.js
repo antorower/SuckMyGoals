@@ -1,36 +1,32 @@
 import { GetUserById } from "@/lib/UserActions";
 import { notFound } from "next/navigation";
 import Name from "@/components/User/Name";
-import { currentUser } from "@clerk/nextjs/server";
 import RelatedUser from "@/components/User/RelatedUser";
 import Accounts from "@/components/User/Accounts/Accounts";
 import ManageCompanies from "@/components/User/Companies/ManageCompanies";
 import AddLeader from "@/components/User/AddLeader";
-import CallButton from "@/components/General/CallButton";
 import UserNote from "@/components/User/UserNote";
 import PlusButton from "@/components/General/PlusButton";
 import { GetDaySchedule } from "@/lib/AppData";
 import Link from "next/link";
-import { GetCurrentTime } from "@/lib/AppData";
-import { auth } from "@clerk/nextjs/server";
 import Image from "next/image";
+import { auth } from "@clerk/nextjs/server";
 
 const User = async ({ searchParams }) => {
   const daySchedule = GetDaySchedule();
   const dayNote = daySchedule?.note;
 
-  const { sessionClaims } = auth();
+  const { userId, sessionClaims } = auth();
 
-  const clerkUser = await currentUser();
-  if (!clerkUser) notFound();
+  if (!userId) notFound();
 
-  const admin = clerkUser.publicMetadata.owner;
-  const owner = !searchParams.user || searchParams.user === clerkUser.publicMetadata.mongoId;
+  const admin = sessionClaims.metadata.owner;
+  const owner = !searchParams.user || searchParams.user === sessionClaims.metadata.mongoId;
 
-  const user = await GetUserById(searchParams.user ? searchParams.user : clerkUser.publicMetadata.mongoId);
+  const user = await GetUserById(searchParams.user ? searchParams.user : sessionClaims.metadata.mongoId);
   if (!user || user.error) notFound();
 
-  const isLeader = user.leaders.some((leaderId) => leaderId._id.toString() === clerkUser.publicMetadata.mongoId);
+  const isLeader = user.leaders.some((leaderId) => leaderId._id.toString() === sessionClaims.metadata.mongoId);
 
   if (!admin && !owner && !isLeader) notFound();
 

@@ -1,14 +1,13 @@
-import { currentUser } from "@clerk/nextjs/server";
 import { RegisterUser } from "@/lib/RegisterActions";
 import { RegisterOwner } from "@/lib/RegisterActions";
 import { notFound } from "next/navigation";
-
+import { auth } from "@clerk/nextjs/server";
 const Register = async () => {
-  const clerkUser = await currentUser();
-  if (!clerkUser) notFound();
+  const { userId, sessionClaims } = auth();
+  if (!userId) notFound();
 
   return (
-    <form action={clerkUser?.publicMetadata.owner ? RegisterOwner : RegisterUser} autoComplete="none" className="flex flex-col w-full max-w-[300px]">
+    <form action={sessionClaims.metadata.owner ? RegisterOwner : RegisterUser} autoComplete="none" className="flex flex-col w-full max-w-[300px]">
       <input type="text" required pattern="[A-Za-z]+" title="First name should only contain letters." minLength={3} maxLength={20} name="firstName" autoComplete="none" placeholder="First Name" className={`${inputClasses} border-t border-x rounded-t`} />
       <input type="text" required pattern="[A-Za-z]+" title="Last name should only contain letters." minLength={3} maxLength={20} name="lastName" autoComplete="none" placeholder="Last Name" className={`${inputClasses} border-t border-x`} />
       <input type="tel" title="Telephone should only contain numbers and special characters like +, -, (, )." minLength={3} maxLength={20} name="telephone" autoComplete="none" placeholder="Telephone" className={`${inputClasses} border-t border-x`} />

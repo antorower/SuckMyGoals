@@ -2,14 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { GetNewUsers } from "@/lib/UserActions";
 import AcceptUserButton from "@/components/Users/AcceptUserButton";
-import { currentUser } from "@clerk/nextjs/server";
 import { notFound } from "next/navigation";
+import { auth } from "@clerk/nextjs/server";
 
 const Accept = async () => {
   const newUsers = await GetNewUsers();
-  const user = await currentUser();
+  const { sessionClaims } = auth();
 
-  if (!user.publicMetadata.owner) notFound();
+  if (!sessionClaims.metadata.owner) notFound();
   return (
     <div className="flex flex-wrap gap-8 p-8">
       {newUsers &&
