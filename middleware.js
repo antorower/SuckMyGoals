@@ -12,19 +12,14 @@ export default clerkMiddleware(async (auth, req) => {
     // Παίρνω όλο το object του clerk user
     const { userId, sessionClaims } = auth();
 
-    let clerkUser;
-    if (userId) {
-      clerkUser = await clerkClient.users.getUser(userId);
-    }
-
     // Αν ο user δεν έχει κάνει login τον στέλνει να κάνει
     if (!userId && !pathname.startsWith("/sign-up") && !pathname.startsWith("/sign-in")) return NextResponse.redirect(new URL("/sign-in", req.url));
 
-    if (clerkUser) {
-      if (clerkUser.publicMetadata.rejected || clerkUser.publicMetadata.banned) return NextResponse.redirect(new URL("/not-found", req.url));
-      if (pathname !== "/register" && !clerkUser.publicMetadata.registered) return NextResponse.redirect(new URL("/register", req.url));
-      if (pathname !== "/approval" && clerkUser.publicMetadata.registered && !clerkUser.publicMetadata.accepted) return NextResponse.redirect(new URL("/approval", req.url));
-      if (pathname === "/companies" && !clerkUser.publicMetadata.owner) return NextResponse.redirect(new URL("/not-found", req.url));
+    if (userId) {
+      if (sessionClaims.metadata.rejected || sessionClaims.metadata.banned) return NextResponse.redirect(new URL("/not-found", req.url));
+      if (pathname !== "/register" && !sessionClaims.metadata.registered) return NextResponse.redirect(new URL("/register", req.url));
+      if (pathname !== "/approval" && sessionClaims.metadata.registered && !sessionClaims.metadata.accepted) return NextResponse.redirect(new URL("/approval", req.url));
+      if (pathname === "/companies" && !sessionClaims.metadata.owner) return NextResponse.redirect(new URL("/not-found", req.url));
     }
   }
 });
