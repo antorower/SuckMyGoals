@@ -2,10 +2,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { GetPendingPayouts } from "@/lib/PayoutActions";
 import AcceptPayoutButton from "@/components/AcceptPayoutButton";
+import { auth } from "@clerk/nextjs/server";
 
 const Bank = async () => {
   const payouts = await GetPendingPayouts();
-  console.log(payouts);
+
+  const { userId, sessionClaims } = auth();
+  if (!userId || !sessionClaims.metadata.owner) notFound();
 
   return (
     <div className="p-8 flex justify-center m-auto w-full">
