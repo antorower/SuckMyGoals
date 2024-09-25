@@ -50,7 +50,7 @@ const User = async ({ searchParams }) => {
       {dayNote && dayNote !== "" && <div className="text-2xl flex justify-center animate-pulse bg-red-600 w-full p-4 font-semibold">{dayNote}</div>}
       {(admin || owner) && <ManageCompanies userId={user._id.toString()} activeCompanies={user.activeCompanies} admin={admin} owner={owner} />}
       <Accounts accounts={user.accounts} selectedAccounts={searchParams.accounts?.toLowerCase()} userId={user._id.toString()} admin={admin} owner={owner} />
-      {admin && <PlusButton link={`/accounts/add?user=${user._id.toString()}`} />}
+      <PlusButton link={`/accounts/add?user=${user._id.toString()}`} />
     </div>
   );
 };
