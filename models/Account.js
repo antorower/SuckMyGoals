@@ -108,9 +108,22 @@ AccountSchema.pre("save", async function (next) {
     }
 
     // Κάθε φορά που αλλάζει το balance ελέγχεται αν το account πρέπει να αλλάξει status
-    if (this.balance >= targetBalance) {
-      this.targetReached();
+    if (this.phaseWeight < 3) {
+      if (this.balance >= targetBalance) {
+        this.targetReached();
+      }
+    } else {
+      if (this.company !== "The5ers") {
+        if (this.balance >= targetBalance - targetBalance * 0.008) {
+          this.targetReached();
+        }
+      } else {
+        if (this.balance >= targetBalance) {
+          this.targetReached();
+        }
+      }
     }
+
     if (this.balance <= drawdownBalance) {
       this.accountLost();
     }
