@@ -36,7 +36,7 @@ const User = async ({ searchParams }) => {
       {user.profits > 0 && (
         <div className="pb-4 text-lg font-bold border-b border-gray-800 w-full flex justify-center items-center">
           <Image src="/dollar.svg" width={24} height={24} />
-          <div>{user.profits}</div>
+          <div>{Math.floor(user.profits)}</div>
         </div>
       )}
       {admin && <AddLeader userId={user._id.toString()} leaders={JSON.stringify(user.leaders)} />}
