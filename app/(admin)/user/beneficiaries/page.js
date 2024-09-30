@@ -19,7 +19,7 @@ const Beneficiaries = async ({ searchParams }) => {
   return (
     <div className="flex flex-col w-full items-center gap-8">
       <div className="border border-b w-full border-gray-800 p-4 text-xl flex justify-center text-gray-400">
-        {sessionClaims.firstName} {sessionClaims.lastName} - Beneficiaries
+        {user.firstName} {user.lastName} - Beneficiaries
       </div>
       {user.beneficiaries && user.beneficiaries.length > 0 && user.beneficiaries.map((beneficiary) => <BeneficiaryCard key={beneficiary._id.toString()} userId={user._id.toString()} beneficiaryId={beneficiary.user._id.toString()} firstName={beneficiary.user.firstName} lastName={beneficiary.user.lastName} percentage={beneficiary.percentage} />)}
       {sessionClaims.metadata.owner && <AddBeneficiaryForm userId={user._id.toString()} />}
