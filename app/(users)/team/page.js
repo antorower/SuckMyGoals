@@ -19,6 +19,7 @@ const Team = async () => {
   }
   if (!users || users.length === 0) return <div className="animate-pulse p-4">Team members not found...</div>;
 
+  console.log(users);
   return (
     <div className="flex flex-col w-full gap-4 pb-[60px] text-gray-400">
       <div className="flex gap-4 justify-center p-4 text-2xl border-b border-gray-800 sticky top-0">
@@ -69,6 +70,21 @@ const Team = async () => {
             </div>
           </Link>
         ))}
+      </div>
+      <div className="flex gap-4 flex-wrap justify-center w-full p-4">
+        {users.map((user) =>
+          user.accounts.map((account) => (
+            <Link href={`/account?account=${account._id.toString()}`} className={`px-4 py-2 flex flex-col items-center justify-center rounded border ${account.phaseWeight === 3 ? "border-orange-600" : null} ${account.phaseWeight === 2 ? "border-violet-600" : null} ${account.phaseWeight === 1 ? "border-blue-600" : null}`}>
+              <div>
+                {user.firstName} {user.lastName}
+              </div>
+              <div>{account.number}</div>
+              <div>{account.company}</div>
+              <div>{account.balance}</div>
+              <div>{account.status}</div>
+            </Link>
+          ))
+        )}
       </div>
     </div>
   );
