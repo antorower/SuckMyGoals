@@ -64,7 +64,7 @@ PayoutSchema.methods.createNewPayout = async function (mongoId, accountId, accou
   this.status = "Pending";
   await this.save();
 
-  //await this.user.addProfits(profitShare * -1, mongoId, accountId);
+  await this.user.addProfits(refund * -1, mongoId, accountId);
   return;
 };
 
