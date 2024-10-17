@@ -17,7 +17,8 @@ const Bank = async () => {
           <div className="text-center text-gray-500 text-lg">
             {payout.user.firstName} {payout.user.lastName}
           </div>
-          <div>{payout.account.balance}</div>
+          <div className="w-full text-center m-auto">{payout.account.balance}</div>
+          <div className="w-full text-center m-auto">{payout.account.company}</div>
           <div className="flex justify-between">
             <div>Account Balance:</div>
             <div> ${payout.accountBalance}</div>
