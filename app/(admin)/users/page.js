@@ -310,7 +310,7 @@ const Users = async ({ searchParams }) => {
               </div>
               <div className="flex justify-between w-full items-center">
                 <div>Profits</div>
-                <div>${user?.profits ? user.profits : 0}</div>
+                <div>${user?.profits ? user.profits.toFixed(0) : 0}</div>
               </div>
             </Link>
           ))}
