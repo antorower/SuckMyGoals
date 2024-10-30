@@ -1,7 +1,6 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import { Inter } from "next/font/google";
 import { ToastContainer } from "react-toastify";
-import Head from "next/head";
 import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
 

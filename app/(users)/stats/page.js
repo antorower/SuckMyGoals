@@ -1,7 +1,70 @@
 import { GetDonePayouts } from "@/lib/PayoutActions";
+import { Companies } from "@/lib/AppData";
+import { GetAllAccountsStats } from "@/lib/AccountActions";
 
 const Stats = async () => {
+  const numberOfTraders = 63;
   const payouts = await GetDonePayouts();
+  const allAccounts = await GetAllAccountsStats();
+
+  // Αρχικοποίηση ξεχωριστών πινάκων για κάθε ομαδοποίηση
+  const byCompany = {};
+  const byCapital = {};
+  const byPhase = {};
+  const byStatus = {};
+  const aboveCapital = [];
+  const belowCapital = [];
+  const equalCapital = [];
+
+  // Ομαδοποίηση του allAccounts με βάση τα κριτήρια
+  allAccounts.forEach((account) => {
+    // Ομαδοποίηση ανά εταιρεία
+    if (!byCompany[account.company]) {
+      byCompany[account.company] = [];
+    }
+    byCompany[account.company].push(account);
+
+    // Ομαδοποίηση ανά κεφάλαιο (capital)
+    if (!byCapital[account.capital]) {
+      byCapital[account.capital] = [];
+    }
+    byCapital[account.capital].push(account);
+
+    // Ομαδοποίηση ανά φάση (phaseWeight)
+    if (!byPhase[account.phaseWeight]) {
+      byPhase[account.phaseWeight] = [];
+    }
+    byPhase[account.phaseWeight].push(account);
+
+    // Ομαδοποίηση ανά κατάσταση (status)
+    if (!byStatus[account.status]) {
+      byStatus[account.status] = [];
+    }
+    byStatus[account.status].push(account);
+
+    // Σύγκριση balance με capital
+    if (account.balance > account.capital) {
+      aboveCapital.push(account);
+    } else if (account.balance < account.capital) {
+      belowCapital.push(account);
+    } else {
+      equalCapital.push(account);
+    }
+  });
+
+  console.log("Accounts grouped by company:", byCompany);
+  console.log("Accounts grouped by capital:", byCapital);
+  console.log("Accounts grouped by phase:", byPhase);
+  console.log("Accounts grouped by status:", byStatus);
+  console.log("Accounts with balance above capital:", aboveCapital);
+  console.log("Accounts with balance below capital:", belowCapital);
+  console.log("Accounts with balance equal to capital:", equalCapital);
+
+  const activeCompanies = Companies.filter((company) => company.active).map((company) => ({
+    name: company.name,
+    maxAccounts: company.maxAccounts,
+    cost: company.cost,
+  }));
 
   // Ομαδοποίηση και υπολογισμός συνολικών κερδών ανά χρήστη
   const userEarnings = payouts.reduce((acc, payout) => {
@@ -16,6 +79,8 @@ const Stats = async () => {
     return acc;
   }, {});
 
+  console.log(allAccounts.length);
+
   // Μετατροπή σε πίνακα, ταξινόμηση και επιλογή των τριών πρώτων
   const topEarners = Object.values(userEarnings)
     .sort((a, b) => b.totalEarnings - a.totalEarnings)
@@ -29,7 +94,7 @@ const Stats = async () => {
           {topEarners.map((earner, index) => (
             <div key={index} className={`flex gap-2 border border-gray-900 px-4 py-2 ${index === 0 ? "text-amber-500" : null} ${index === 1 ? "text-slate-300" : null} ${index === 2 ? "text-stone-300" : null}`}>
               <div>{earner.name}</div>
-              <div>${(earner.totalEarnings * 0.15).toFixed(2)}</div>
+              <div>${earner.totalEarnings.toFixed(2)}</div>
             </div>
           ))}
         </div>
@@ -47,6 +112,39 @@ const Stats = async () => {
                 <div>${payout.payoutAmount}</div>
               </div>
             ))}
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <div className="w-full text-sm p-2 text-gray-500">Accounts By Company</div>
+        <div className="grid grid-cols-12 max-w-[400px]">
+          <div className="col-span-5">Funded Next: </div>
+          <div className="col-span-4">
+            {byCompany["Funded Next"]?.length + byCompany["Funded Next Stellar"]?.length ? byCompany["Funded Next"]?.length + byCompany["Funded Next Stellar"]?.length : 0}/{numberOfTraders * 3}
+          </div>
+          <div className="col-span-3">{byCompany["Funded Next"]?.length + byCompany["Funded Next Stellar"]?.length ? (byCompany["Funded Next"]?.length + byCompany["Funded Next Stellar"]?.length) / (numberOfTraders * 3) + "%" : "0%"}</div>
+        </div>
+        <div className="grid grid-cols-12 max-w-[400px]">
+          <div className="col-span-5">Funding Pips:</div>
+          <div className="col-span-4">
+            {byCompany["Funding Pips"]?.length ? byCompany["Funding Pips"]?.length : 0}/{numberOfTraders * 1}
+          </div>
+          <div className="col-span-3">{byCompany["Funding Pips"]?.length > 0 && numberOfTraders > 0 ? `${Math.round((byCompany["Funding Pips"]?.length / (numberOfTraders * 3)) * 100)}%` : "0%"}</div>
+        </div>
+        <div className="grid grid-cols-12 max-w-[400px]">
+          <div className="col-span-5">The5ers:</div>
+          <div className="col-span-4">
+            {byCompany["The5ers"]?.length ? byCompany["The5ers"]?.length : 0}/{numberOfTraders * 1}
+          </div>
+          <div className="col-span-3">{byCompany["The5ers"]?.length > 0 && numberOfTraders > 0 ? `${Math.round((byCompany["The5ers"]?.length / (numberOfTraders * 3)) * 100)}%` : "0%"}</div>
+        </div>
+        <div className="grid grid-cols-12 max-w-[400px]">
+          <div className="col-span-5">Total:</div>
+          <div className="col-span-4">
+            {(byCompany["The5ers"]?.length || 0) + (byCompany["Funding Pips"]?.length || 0) + (byCompany["Funded Next"]?.length || 0) + (byCompany["Funded Next Stellar"]?.length || 0)}/ {numberOfTraders * 5}
+          </div>
+
+          <div className="col-span-3">{numberOfTraders > 0 ? `${Math.round((((byCompany["The5ers"]?.length || 0) + (byCompany["Funding Pips"]?.length || 0) + (byCompany["Funded Next"]?.length || 0) + (byCompany["Funded Next Stellar"]?.length || 0)) / (numberOfTraders * 5)) * 100)}%` : "0%"}</div>
         </div>
       </div>
     </div>
