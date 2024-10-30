@@ -122,7 +122,7 @@ const Stats = async () => {
           <div className="col-span-4">
             {byCompany["Funded Next"]?.length + byCompany["Funded Next Stellar"]?.length ? byCompany["Funded Next"]?.length + byCompany["Funded Next Stellar"]?.length : 0}/{numberOfTraders * 3}
           </div>
-          <div className="col-span-3">{byCompany["Funded Next"]?.length + byCompany["Funded Next Stellar"]?.length ? (byCompany["Funded Next"]?.length + byCompany["Funded Next Stellar"]?.length) / (numberOfTraders * 3) + "%" : "0%"}</div>
+          <div className="col-span-3">{byCompany["Funded Next"]?.length + byCompany["Funded Next Stellar"]?.length ? Math.floor(((byCompany["Funded Next"]?.length + byCompany["Funded Next Stellar"]?.length) / (numberOfTraders * 3)) * 100) + "%" : "0%"}</div>
         </div>
         <div className="grid grid-cols-12 max-w-[400px]">
           <div className="col-span-5">Funding Pips:</div>
