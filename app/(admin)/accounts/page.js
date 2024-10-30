@@ -113,8 +113,10 @@ const Accounts = async ({ searchParams }) => {
                     <div className="text-gray-600">{account.number}</div>
                     {account.status !== "Review" && <div className="text-gray-600">{account.status}</div>}
                     {account.status === "Review" && sessionClaims.metadata.owner && <AccountLostButton accountId={account._id.toString()} />}
-                    <div>{new Date(account.eventsTimestamp.firstTradeDate).toLocaleDateString("el-GR")}</div>
-                    {account.eventsTimestamp.targetReachedDate && <div>{new Date(account.eventsTimestamp.targetReachedDate).toLocaleDateString("el-GR")}</div>}
+                    <div>FiTr: {new Date(account.eventsTimestamp.firstTradeDate).toLocaleDateString("el-GR")}</div>
+                    {account.eventsTimestamp.targetReachedDate && account.phaseWeight !== 3 && <div>TaRe: {new Date(account.eventsTimestamp.targetReachedDate).toLocaleDateString("el-GR")}</div>}
+                    {account.phaseWeight === 3 && <div>PaDa: {account.eventsTimestamp.payoutRequestDate.day}</div>}
+                    {account.phaseWeight === 3 && <div>TiPa: {account.metadata.timesPaid}</div>}
                     <div>{account.balance}</div>
                   </Link>
                 )}
