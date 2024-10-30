@@ -27,9 +27,9 @@ const Stats = async () => {
         <div className="w-full text-sm p-2 text-gray-500">Top Earners (MVP)</div>
         <div className="flex gap-4 flex-wrap">
           {topEarners.map((earner, index) => (
-            <div key={index} className={`flex gap-2 border border-gray-900 px-4 py-2 ${index === 0 ? "text-amber-500" : null} ${index === 1 ? "text-slate-500" : null} ${index === 2 ? "text-stone-700" : null}`}>
+            <div key={index} className={`flex gap-2 border border-gray-900 px-4 py-2 ${index === 0 ? "text-amber-500" : null} ${index === 1 ? "text-slate-300" : null} ${index === 2 ? "text-stone-300" : null}`}>
               <div>{earner.name}</div>
-              <div>${earner.totalEarnings.toFixed(2)}</div>
+              <div>${(earner.totalEarnings * 0.15).toFixed(2)}</div>
             </div>
           ))}
         </div>
