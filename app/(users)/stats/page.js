@@ -101,21 +101,6 @@ const Stats = async () => {
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="w-full text-sm p-2 text-gray-500">Most Recent Payouts</div>
-        <div className="flex gap-4 flex-wrap">
-          {payouts &&
-            payouts.map((payout) => (
-              <div key={payout._id} className="flex gap-2 border border-gray-900 px-4 py-2">
-                <div>
-                  {payout.user.firstName} {payout.user.lastName}
-                </div>
-                <div>${payout.payoutAmount}</div>
-              </div>
-            ))}
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-2">
         <div className="w-full text-sm p-2 text-gray-500">Accounts By Company</div>
         <div className="grid grid-cols-12 max-w-[400px]">
           <div className="col-span-5">Funded Next: </div>
@@ -138,13 +123,44 @@ const Stats = async () => {
           </div>
           <div className="col-span-3">{byCompany["The5ers"]?.length ? Math.floor((byCompany["The5ers"]?.length / (numberOfTraders * 1)) * 100) + "%" : "0%"}</div>
         </div>
-        <div className="grid grid-cols-12 max-w-[400px]">
+        <div className="grid grid-cols-12 max-w-[400px] animate-pulse">
           <div className="col-span-5">Total:</div>
           <div className="col-span-4">
             {(byCompany["The5ers"]?.length || 0) + (byCompany["Funding Pips"]?.length || 0) + (byCompany["Funded Next"]?.length || 0) + (byCompany["Funded Next Stellar"]?.length || 0)}/ {numberOfTraders * 5}
           </div>
 
           <div className="col-span-3">{numberOfTraders > 0 ? `${Math.round((((byCompany["The5ers"]?.length || 0) + (byCompany["Funding Pips"]?.length || 0) + (byCompany["Funded Next"]?.length || 0) + (byCompany["Funded Next Stellar"]?.length || 0)) / (numberOfTraders * 5)) * 100)}%` : "0%"}</div>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <div className="w-full text-sm p-2 text-gray-500">Accounts By Capital</div>
+        <div className="grid grid-cols-2 max-w-[200px]">
+          <div>5000:</div>
+          <div>{byCapital["5000"]?.length || 0}</div>
+        </div>
+        <div className="grid grid-cols-2 max-w-[200px]">
+          <div>6000:</div>
+          <div>{byCapital["6000"]?.length || 0}</div>
+        </div>
+        <div className="grid grid-cols-2 max-w-[200px]">
+          <div>7500:</div>
+          <div>{byCapital["7500"]?.length || 0}</div>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <div className="w-full text-sm p-2 text-gray-500">Most Recent Payouts</div>
+        <div className="flex gap-4 flex-wrap">
+          {payouts &&
+            payouts.map((payout) => (
+              <div key={payout._id} className="flex gap-2 border border-gray-900 px-4 py-2">
+                <div>
+                  {payout.user.firstName} {payout.user.lastName}
+                </div>
+                <div>${payout.payoutAmount}</div>
+              </div>
+            ))}
         </div>
       </div>
     </div>
