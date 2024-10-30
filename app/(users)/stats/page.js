@@ -90,7 +90,11 @@ const Stats = async () => {
     return acc;
   }, {});
 
-  console.log(allAccounts.length);
+  const waitingPurchaseCount = allAccounts.filter((account) => account.status === "WaitingPurchase").length;
+  const liveCount = allAccounts.filter((account) => account.status === "Live").length;
+  const needUpgradeCount = allAccounts.filter((account) => account.status === "NeedUpgrade").length;
+  const waitingPayoutCount = allAccounts.filter((account) => account.status === "WaitingPayout" || account.status === "PayoutRequestDone").length;
+  const moneySendedCount = allAccounts.filter((account) => account.status === "MoneySended").length;
 
   // Μετατροπή σε πίνακα, ταξινόμηση και επιλογή των τριών πρώτων
   const topEarners = Object.values(userEarnings)
@@ -178,6 +182,46 @@ const Stats = async () => {
         <div className="grid grid-cols-2 max-w-[200px] text-amber-500">
           <div>Funded:</div>
           <div>{byPhase["3"]?.length || 0}</div>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <div className="w-full text-sm p-2 text-gray-500">Accounts By Status</div>
+        <div className="grid grid-cols-2 max-w-[400px]">
+          <div>Purchase</div>
+          <div>{waitingPurchaseCount}</div>
+        </div>
+        <div className="grid grid-cols-2 max-w-[400px]">
+          <div>Live</div>
+          <div>{liveCount}</div>
+        </div>
+        <div className="grid grid-cols-2 max-w-[400px]">
+          <div>Upgrade</div>
+          <div>{needUpgradeCount}</div>
+        </div>
+        <div className="grid grid-cols-2 max-w-[400px]">
+          <div>Reset</div>
+          <div>{moneySendedCount}</div>
+        </div>
+        <div className="grid grid-cols-2 max-w-[400px] text-amber-500">
+          <div>Payouts</div>
+          <div>{waitingPayoutCount}</div>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <div className="w-full text-sm p-2 text-gray-500">Winning/Losing Accounts</div>
+        <div className="grid grid-cols-2 max-w-[400px]">
+          <div>Winning Accounts</div>
+          <div>{aboveCapital.length}</div>
+        </div>
+        <div className="grid grid-cols-2 max-w-[400px]">
+          <div>Zero Balance Accounts</div>
+          <div>{equalCapital.length}</div>
+        </div>
+        <div className="grid grid-cols-2 max-w-[400px]">
+          <div>Losing Accounts</div>
+          <div>{belowCapital.length}</div>
         </div>
       </div>
 
