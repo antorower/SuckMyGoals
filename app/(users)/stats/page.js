@@ -59,6 +59,13 @@ const Stats = async () => {
   console.log("Accounts with balance above capital:", aboveCapital);
   console.log("Accounts with balance below capital:", belowCapital);
   console.log("Accounts with balance equal to capital:", equalCapital);
+  // Ελέγχουμε ότι το byPhase["3"] είναι ένας έγκυρος πίνακας
+  const totalDifferencePhase3 =
+    byPhase["3"]?.reduce((acc, item) => {
+      return acc + (item.balance - item.capital);
+    }, 0) || 0;
+
+  console.log("Total Difference for Phase 3:", totalDifferencePhase3);
 
   const activeCompanies = Companies.filter((company) => company.active).map((company) => ({
     name: company.name,
@@ -98,6 +105,10 @@ const Stats = async () => {
             </div>
           ))}
         </div>
+      </div>
+
+      <div className="flex flex-col gap-2 mt-8">
+        <div className="w-full text-sm p-2 text-gray-500">Waiting Profits: {totalDifferencePhase3}</div>
       </div>
 
       <div className="flex flex-col gap-2">
