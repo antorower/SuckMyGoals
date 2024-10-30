@@ -150,6 +150,22 @@ const Stats = async () => {
       </div>
 
       <div className="flex flex-col gap-2">
+        <div className="w-full text-sm p-2 text-gray-500">Accounts By Phase</div>
+        <div className="grid grid-cols-2 max-w-[200px]">
+          <div>Phase 1:</div>
+          <div>{byPhase["1"]?.length || 0}</div>
+        </div>
+        <div className="grid grid-cols-2 max-w-[200px]">
+          <div>Phase 2:</div>
+          <div>{byPhase["2"]?.length || 0}</div>
+        </div>
+        <div className="grid grid-cols-2 max-w-[200px] text-amber-500">
+          <div>Funded:</div>
+          <div>{byPhase["3"]?.length || 0}</div>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
         <div className="w-full text-sm p-2 text-gray-500">Most Recent Payouts</div>
         <div className="flex gap-4 flex-wrap">
           {payouts &&
