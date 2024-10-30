@@ -59,13 +59,17 @@ const Stats = async () => {
   console.log("Accounts with balance above capital:", aboveCapital);
   console.log("Accounts with balance below capital:", belowCapital);
   console.log("Accounts with balance equal to capital:", equalCapital);
+  console.log("BY PHASE", byPhase["3"]);
   // Ελέγχουμε ότι το byPhase["3"] είναι ένας έγκυρος πίνακας
   const totalDifferencePhase3 =
     byPhase["3"]?.reduce((acc, item) => {
-      return acc + (item.balance - item.capital);
+      if (item.status === "WaitingPayout") {
+        return acc + (item.balance - item.capital);
+      }
+      return acc;
     }, 0) || 0;
 
-  console.log("Total Difference for Phase 3:", totalDifferencePhase3);
+  console.log("Total Difference for Phase 3 with status 'WaitingPayout':", totalDifferencePhase3);
 
   const activeCompanies = Companies.filter((company) => company.active).map((company) => ({
     name: company.name,
