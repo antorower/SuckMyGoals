@@ -129,14 +129,14 @@ const Stats = async () => {
           <div className="col-span-4">
             {byCompany["Funding Pips"]?.length ? byCompany["Funding Pips"]?.length : 0}/{numberOfTraders * 1}
           </div>
-          <div className="col-span-3">{byCompany["Funding Pips"]?.length > 0 && numberOfTraders > 0 ? `${Math.round((byCompany["Funding Pips"]?.length / (numberOfTraders * 3)) * 100)}%` : "0%"}</div>
+          <div className="col-span-3">{byCompany["Funding Pips"]?.length ? Math.floor((byCompany["Funding Pips"]?.length / (numberOfTraders * 1)) * 100) + "%" : "0%"}</div>
         </div>
         <div className="grid grid-cols-12 max-w-[400px]">
           <div className="col-span-5">The5ers:</div>
           <div className="col-span-4">
             {byCompany["The5ers"]?.length ? byCompany["The5ers"]?.length : 0}/{numberOfTraders * 1}
           </div>
-          <div className="col-span-3">{byCompany["The5ers"]?.length > 0 && numberOfTraders > 0 ? `${Math.round((byCompany["The5ers"]?.length / (numberOfTraders * 3)) * 100)}%` : "0%"}</div>
+          <div className="col-span-3">{byCompany["The5ers"]?.length ? Math.floor((byCompany["The5ers"]?.length / (numberOfTraders * 1)) * 100) + "%" : "0%"}</div>
         </div>
         <div className="grid grid-cols-12 max-w-[400px]">
           <div className="col-span-5">Total:</div>
