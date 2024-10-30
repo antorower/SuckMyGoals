@@ -16,10 +16,6 @@ export default async function RootLayout({ children }) {
   return (
     <ClerkProvider>
       <html lang="en">
-        <Head>
-          {/* Εδώ προσθέτεις το script */}
-          <script src="https://app.livechatai.com/embed.js" data-id="cm00vudtf0001ltkpx3o9fyr4" async defer></script>
-        </Head>
         <body className={`${inter.className} bg-gray-950 text-white overflow-x-clip`}>
           {children}
           <ToastContainer position="bottom-right" autoClose={8000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable={false} pauseOnHover theme="dark" />
