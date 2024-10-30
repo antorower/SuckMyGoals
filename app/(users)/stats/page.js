@@ -43,14 +43,12 @@ const Stats = async () => {
     byStatus[account.status].push(account);
 
     // Σύγκριση balance με capital
-    if (account.status === "Live") {
-      if (account.balance > account.capital) {
-        aboveCapital.push(account);
-      } else if (account.balance < account.capital) {
-        belowCapital.push(account);
-      } else {
-        equalCapital.push(account);
-      }
+    if (account.balance > account.capital) {
+      aboveCapital.push(account);
+    } else if (account.balance < account.capital) {
+      belowCapital.push(account);
+    } else {
+      equalCapital.push(account);
     }
   });
 
