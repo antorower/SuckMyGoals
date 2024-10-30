@@ -112,7 +112,8 @@ const Stats = async () => {
       </div>
 
       <div className="flex flex-col gap-2 mt-8">
-        <div className="w-full text-sm p-2 text-gray-500">Waiting Profits: {totalDifferencePhase3}</div>
+        <div className="w-full text-sm p-2 text-gray-500">Waiting Profits</div>
+        <div className="animate-pulse text-amber-500">Gross Profits: ${totalDifferencePhase3}</div>
       </div>
 
       <div className="flex flex-col gap-2">
