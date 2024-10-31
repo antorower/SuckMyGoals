@@ -115,7 +115,7 @@ const Accounts = async ({ searchParams }) => {
                     {account.status === "Review" && sessionClaims.metadata.owner && <AccountLostButton accountId={account._id.toString()} />}
                     <div>FiTr: {new Date(account.eventsTimestamp.firstTradeDate).toLocaleDateString("el-GR")}</div>
                     {account.eventsTimestamp.targetReachedDate && account.phaseWeight !== 3 && <div>TaRe: {new Date(account.eventsTimestamp.targetReachedDate).toLocaleDateString("el-GR")}</div>}
-                    {account.phaseWeight === 3 && (
+                    {account.phaseWeight === 3 && account?.payoutRequestDate?.day && (
                       <div>
                         PaDa: {account?.payoutRequestDate?.day} / {account?.payoutRequestDate?.month} / 2024
                       </div>
