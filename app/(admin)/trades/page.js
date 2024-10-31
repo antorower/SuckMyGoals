@@ -92,6 +92,7 @@ const Trades = async ({ searchParams }) => {
                     <div>{trade.company}</div>
                     <div className="text-gray-400">{trade.capital}</div>
                   </div>
+                  <div>Phase {trade?.account?.phaseWeight}</div>
                   <div className="flex gap-4 m-auto">
                     <div className="">{trade.trade.pair}</div>
                     <div className={`${trade.trade.position === "Buy" ? "text-green-500" : "text-red-500"}`}>{trade.trade.position}</div>
