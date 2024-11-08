@@ -19,6 +19,7 @@ const Bank = async () => {
           </div>
           <div className="w-full text-center m-auto">{payout.account.balance}</div>
           <div className="w-full text-center m-auto">{payout.account.company}</div>
+          <div className="w-full text-center m-auto">Times Paid: {payout.account.metadata.timesPaid}</div>
           <div className="flex justify-between">
             <div>Account Balance:</div>
             <div> ${payout.accountBalance}</div>
