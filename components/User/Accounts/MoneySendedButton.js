@@ -91,7 +91,7 @@ const MoneySendedButton = ({ accountId, clerkId, mongoId }) => {
       <input type="number" className="input" placeholder="Final Amount" value={Math.round(finalAmount)} readOnly />
       {payoutAmount > 0 && (
         <button className="bg-blue-600 w-full max-w-96 mt-2 p-4 rounded hover:bg-blue-700" onClick={SendMoney} disabled={!isButtonActive}>
-          I keep ${refund} and I send ${(parseFloat(payoutAmount) - parseFloat(refund)).toFixed(2)}
+          I keep ${0} and I send ${parseFloat(payoutAmount)}
         </button>
       )}
     </div>
