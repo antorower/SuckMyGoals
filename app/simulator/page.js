@@ -81,6 +81,7 @@ export default function Simulator() {
   const [worstSimulation, setWorstSimulation] = useState(null);
   const [aggregateStats, setAggregateStats] = useState(null);
   const [companyStats, setCompanyStats] = useState(null);
+  const [profitDistribution, setProfitDistribution] = useState(null);
 
   const totalCost = useMemo(() => fundedNextAccount.price * fundedNextQuantity + ftmoAccount.price * ftmoQuantity + the5ersAccount.price * the5ersQuantity + fundingPipsAccount.price * fundingPipsQuantity, [fundedNextAccount, fundedNextQuantity, ftmoAccount, ftmoQuantity, the5ersAccount, the5ersQuantity, fundingPipsAccount, fundingPipsQuantity]);
 
@@ -153,6 +154,7 @@ export default function Simulator() {
     let worst = null;
     let profitableCount = 0;
     let unprofitableCount = 0;
+    let allProfits = [];
 
     for (let i = 0; i < 1000; i++) {
       const result = runSingleSimulation();
@@ -167,12 +169,34 @@ export default function Simulator() {
       } else {
         unprofitableCount++;
       }
+      allProfits.push(result.totalProfit - totalCost);
     }
 
     setSimulationResults(runSingleSimulation());
     setBestSimulation(best);
     setWorstSimulation(worst);
     setAggregateStats({ profitableCount, unprofitableCount });
+
+    // Υπολογισμός της κατανομής κερδών
+    const sortedProfits = allProfits.sort((a, b) => a - b);
+    const min = sortedProfits[0];
+    const max = sortedProfits[sortedProfits.length - 1];
+    const range = max - min;
+    const binSize = range / 10; // Χωρίζουμε σε 20 κατηγορίες
+
+    const distribution = Array(11).fill(0);
+    sortedProfits.forEach((profit) => {
+      const binIndex = Math.min(Math.floor((profit - min) / binSize), 19);
+      distribution[binIndex]++;
+    });
+
+    const profitDistributionData = distribution.map((count, index) => ({
+      range: `$${formatNumber(min + index * binSize)} - $${formatNumber(min + (index + 1) * binSize)}`,
+      count,
+      percentage: (count / sortedProfits.length) * 100,
+    }));
+
+    setProfitDistribution(profitDistributionData);
   };
 
   const formatNumber = (number) => {
@@ -272,6 +296,23 @@ export default function Simulator() {
     );
   };
 
+  const ProfitDistributionDisplay = ({ distribution }) => {
+    if (!distribution) return null;
+    return (
+      <div className="mt-6 p-4 border rounded-lg shadow-sm">
+        <h2 className="text-xl font-semibold mb-2">Normal Profits Distribution (1.000 Simulations)</h2>
+        <div className="flex flex-col gap-2">
+          {distribution.map((bin, index) => (
+            <p key={index} className="text-sm">
+              <span className="font-medium">{bin.range}: </span>
+              {formatNumber(bin.count)} φορές ({formatNumber(bin.percentage)}%)
+            </p>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="flex flex-col gap-4 p-8 bg-white text-black">
       <div className="mt-6 p-4 border rounded-lg shadow-sm">
@@ -309,6 +350,7 @@ export default function Simulator() {
       <SimulationResultsDisplay title="Best Simulation Results (Highest ROI)" results={bestSimulation} />
       <SimulationResultsDisplay title="Worst Simulation Results (Lowest ROI)" results={worstSimulation} />
       <CompanyStatsDisplay stats={companyStats} />
+      <ProfitDistributionDisplay distribution={profitDistribution} />
     </div>
   );
 }
