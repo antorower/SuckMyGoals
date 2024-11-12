@@ -31,7 +31,7 @@ const accountOptions = {
   ],
 };
 
-function simulateAccount(company, capital) {
+function simulateAccount(company, capital, price) {
   let successRate1, successRate2, successRate3, profitPercentage;
 
   if (company === "FTMO") {
@@ -54,15 +54,30 @@ function simulateAccount(company, capital) {
 
   let totalProfit = 0;
   let payments = 0;
+  let isFirstPayment = true;
+
   while (Math.random() <= successRate3) {
+    if (isFirstPayment) {
+      totalProfit += price;
+      isFirstPayment = false;
+    }
     totalProfit += capital * profitPercentage;
     payments++;
+
+    if (company === "Funded Next" && payments === 3) {
+      totalProfit += capital * 0.02;
+    }
+
+    if (company === "The5ers" && payments === 5) {
+      totalProfit += capital * profitPercentage;
+      payments++;
+    }
   }
 
   return { profit: totalProfit, steps: 3, payments };
 }
 
-export default function Simulator() {
+export default function Component() {
   const [fundedNextAccount, setFundedNextAccount] = useState(accountOptions.fundedNext[0]);
   const [fundedNextQuantity, setFundedNextQuantity] = useState(0);
 
@@ -112,7 +127,7 @@ export default function Simulator() {
       companyResults[company].totalAccounts = quantity;
       for (let i = 0; i < quantity; i++) {
         totalAccounts++;
-        const result = simulateAccount(company, account.capital);
+        const result = simulateAccount(company, account.capital, account.price);
         if (result.steps > 1) {
           passedStep1++;
           companyResults[company].passedStep1++;
@@ -177,12 +192,11 @@ export default function Simulator() {
     setWorstSimulation(worst);
     setAggregateStats({ profitableCount, unprofitableCount });
 
-    // Υπολογισμός της κατανομής κερδών
     const sortedProfits = allProfits.sort((a, b) => a - b);
     const min = sortedProfits[0];
     const max = sortedProfits[sortedProfits.length - 1];
     const range = max - min;
-    const binSize = range / 10; // Χωρίζουμε σε 20 κατηγορίες
+    const binSize = range / 10;
 
     const distribution = Array(11).fill(0);
     sortedProfits.forEach((profit) => {
