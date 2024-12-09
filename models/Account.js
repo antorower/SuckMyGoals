@@ -52,6 +52,7 @@ const AccountSchema = new mongoose.Schema(
     payoutRequestDate: {
       day: Number,
       month: Number,
+      year: Number,
     },
     eventsTimestamp: {
       targetReachedDate: Date,
@@ -314,9 +315,10 @@ AccountSchema.methods.addActivity = function (title, description) {
   });
 };
 
-AccountSchema.methods.updatePayoutRequestDate = async function (day, month) {
+AccountSchema.methods.updatePayoutRequestDate = async function (day, month, year) {
   this.payoutRequestDate.day = day;
   this.payoutRequestDate.month = month;
+  this.payoutRequestDate.year = year;
   await this.save();
   return;
 };

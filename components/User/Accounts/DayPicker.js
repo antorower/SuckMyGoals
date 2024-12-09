@@ -4,9 +4,10 @@ import { toast } from "react-toastify";
 import { UpdatePayoutRequestDate } from "@/lib/AccountActions";
 import { useRouter } from "next/navigation";
 
-const DayPicker = ({ accountId, savedDay, savedMonth }) => {
+const DayPicker = ({ accountId, savedDay, savedMonth, savedYear }) => {
   const [day, setDay] = useState(savedDay || 1);
   const [month, setMonth] = useState(savedMonth || 1);
+  const [year, setYear] = useState(savedYear || 1);
   const [isButtonActive, setIsButtonActive] = useState(true);
   const router = useRouter();
 
@@ -18,9 +19,13 @@ const DayPicker = ({ accountId, savedDay, savedMonth }) => {
     setMonth(e.target.value);
   };
 
+  const handleYearChange = (e) => {
+    setYear(e.target.value);
+  };
+
   const UpdateDate = async () => {
     setIsButtonActive(false);
-    const response = await UpdatePayoutRequestDate(accountId, day, month);
+    const response = await UpdatePayoutRequestDate(accountId, day, month, year);
     if (response.error) {
       toast.error(response.message);
     } else {
@@ -57,7 +62,7 @@ const DayPicker = ({ accountId, savedDay, savedMonth }) => {
 
         <div className="flex flex-col gap-2">
           <div className="m-auto text-gray-400 text-xs">Year</div>
-          <select className="bg-gray-800 text-gray-400 p-2 rounded focus:outline-none focus:ring-2">
+          <select value={year} onChange={handleYearChange} className="bg-gray-800 text-gray-400 p-2 rounded focus:outline-none focus:ring-2">
             <option value="2024">2024</option>
             <option value="2025">2025</option>
           </select>
