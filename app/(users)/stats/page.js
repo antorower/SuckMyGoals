@@ -3,7 +3,7 @@ import { Companies } from "@/lib/AppData";
 import { GetAllAccountsStats } from "@/lib/AccountActions";
 
 const Stats = async () => {
-  const numberOfTraders = 63;
+  const numberOfTraders = 41;
   const payouts = await GetDonePayouts();
   const allAccounts = await GetAllAccountsStats();
 
@@ -125,9 +125,9 @@ const Stats = async () => {
         <div className="grid grid-cols-12 max-w-[400px]">
           <div className="col-span-5">Funded Next: </div>
           <div className="col-span-4">
-            {byCompany["Funded Next"]?.length + byCompany["Funded Next Stellar"]?.length ? byCompany["Funded Next"]?.length + byCompany["Funded Next Stellar"]?.length : 0}/{numberOfTraders * 3}
+            {byCompany["Funded Next"]?.length + byCompany["Funded Next Stellar"]?.length ? byCompany["Funded Next"]?.length + byCompany["Funded Next Stellar"]?.length : 0}/{numberOfTraders}
           </div>
-          <div className="col-span-3">{byCompany["Funded Next"]?.length + byCompany["Funded Next Stellar"]?.length ? Math.floor(((byCompany["Funded Next"]?.length + byCompany["Funded Next Stellar"]?.length) / (numberOfTraders * 3)) * 100) + "%" : "0%"}</div>
+          <div className="col-span-3">{byCompany["Funded Next"]?.length + byCompany["Funded Next Stellar"]?.length ? Math.floor(((byCompany["Funded Next"]?.length + byCompany["Funded Next Stellar"]?.length) / numberOfTraders) * 100) + "%" : "0%"}</div>
         </div>
         <div className="grid grid-cols-12 max-w-[400px]">
           <div className="col-span-5">Funding Pips:</div>
