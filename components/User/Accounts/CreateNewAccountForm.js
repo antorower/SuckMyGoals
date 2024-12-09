@@ -32,6 +32,12 @@ const CreateNewAccountForm = ({ userIdAccountOwner, companyName, isAdmin, invest
         return;
       }
     }
+    if (companyName === "Maven") {
+      if (parseFloat(capital) !== 5000) {
+        toast.warn("Capital is wrong");
+        return;
+      }
+    }
     if (companyName === "Funded Next") {
       toast.warn("Company is wrong, choose Funded Next Stellar instead");
       return;

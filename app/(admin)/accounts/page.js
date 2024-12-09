@@ -59,6 +59,7 @@ const Accounts = async ({ searchParams }) => {
   const fundedNextAccounts = accounts.filter((account) => account.company === "Funded Next");
   const the5ersAccounts = accounts.filter((account) => account.company === "The5ers");
   const fundedNextStellarAccounts = accounts.filter((account) => account.company === "Funded Next Stellar");
+  const maven = accounts.filter((account) => account.company === "Maven");
 
   return (
     <div className="flex flex-col gap-2">
@@ -94,6 +95,7 @@ const Accounts = async ({ searchParams }) => {
             <div className="border border-gray-800 px-3 py-2">Funded Next: {fundedNextAccounts.length}</div>
             <div className="border border-gray-800 px-3 py-2">Funded Next Stellar: {fundedNextStellarAccounts.length}</div>
             <div className="border border-gray-800 px-3 py-2">The5ers: {the5ersAccounts.length}</div>
+            <div className="border border-gray-800 px-3 py-2">Maven: {maven.length}</div>
           </div>
           <div className="flex flex-wrap gap-4 p-8 justify-center items-start">
             {waitingPurchaseAccounts.map((account) => (

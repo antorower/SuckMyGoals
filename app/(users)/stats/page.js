@@ -52,14 +52,6 @@ const Stats = async () => {
     }
   });
 
-  console.log("Accounts grouped by company:", byCompany);
-  console.log("Accounts grouped by capital:", byCapital);
-  console.log("Accounts grouped by phase:", byPhase);
-  console.log("Accounts grouped by status:", byStatus);
-  console.log("Accounts with balance above capital:", aboveCapital);
-  console.log("Accounts with balance below capital:", belowCapital);
-  console.log("Accounts with balance equal to capital:", equalCapital);
-  console.log("BY PHASE", byPhase["3"]);
   // Ελέγχουμε ότι το byPhase["3"] είναι ένας έγκυρος πίνακας
   const totalDifferencePhase3 =
     byPhase["3"]?.reduce((acc, item) => {
