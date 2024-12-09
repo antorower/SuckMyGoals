@@ -141,7 +141,7 @@ const Stats = async () => {
             {(byCompany["The5ers"]?.length || 0) + (byCompany["Funding Pips"]?.length || 0) + (byCompany["Funded Next"]?.length || 0) + (byCompany["Funded Next Stellar"]?.length || 0)}/ {numberOfTraders * 3}
           </div>
 
-          <div className="col-span-3">{numberOfTraders > 0 ? `${Math.round((((byCompany["The5ers"]?.length || 0) + (byCompany["Funding Pips"]?.length || 0) + (byCompany["Funded Next"]?.length || 0) + (byCompany["Funded Next Stellar"]?.length || 0)) / (numberOfTraders * 5)) * 100)}%` : "0%"}</div>
+          <div className="col-span-3">{numberOfTraders > 0 ? `${Math.round((((byCompany["The5ers"]?.length || 0) + (byCompany["Funding Pips"]?.length || 0) + (byCompany["Funded Next"]?.length || 0) + (byCompany["Funded Next Stellar"]?.length || 0)) / (numberOfTraders * 3)) * 100)}%` : "0%"}</div>
         </div>
       </div>
 
