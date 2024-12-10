@@ -135,6 +135,14 @@ const Stats = async () => {
           </div>
           <div className="col-span-3">{byCompany["The5ers"]?.length ? Math.floor((byCompany["The5ers"]?.length / (numberOfTraders * 1)) * 100) + "%" : "0%"}</div>
         </div>
+        <div className="grid grid-cols-12 max-w-[400px]">
+          <div className="col-span-5">Maven:</div>
+          <div className="col-span-4">
+            {byCompany["Maven"]?.length ? byCompany["Maven"]?.length : 0}/{numberOfTraders * 1}
+          </div>
+          <div className="col-span-3">{byCompany["Maven"]?.length ? Math.floor((byCompany["Maven"]?.length / (numberOfTraders * 1)) * 100) + "%" : "0%"}</div>
+        </div>
+
         <div className="grid grid-cols-12 max-w-[400px] animate-pulse">
           <div className="col-span-5">Total:</div>
           <div className="col-span-4">
