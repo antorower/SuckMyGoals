@@ -146,7 +146,7 @@ const Stats = async () => {
         <div className="grid grid-cols-12 max-w-[400px] animate-pulse">
           <div className="col-span-5">Total:</div>
           <div className="col-span-4">
-            {(byCompany["The5ers"]?.length || 0) + (byCompany["Funding Pips"]?.length || 0) + (byCompany["Funded Next"]?.length || 0) + (byCompany["Funded Next Stellar"]?.length || 0) + (byCompany["Maven"]?.length || 0)}/ {numberOfTraders * 3}
+            {(byCompany["The5ers"]?.length || 0) + (byCompany["Funding Pips"]?.length || 0) + (byCompany["Funded Next"]?.length || 0) + (byCompany["Funded Next Stellar"]?.length || 0) + (byCompany["Maven"]?.length || 0)}/ {numberOfTraders * 4}
           </div>
 
           <div className="col-span-3">{numberOfTraders > 0 ? `${Math.round((((byCompany["The5ers"]?.length || 0) + (byCompany["Funding Pips"]?.length || 0) + (byCompany["Funded Next"]?.length || 0) + (byCompany["Funded Next Stellar"]?.length || 0) + (byCompany["Maven"]?.length || 0)) / (numberOfTraders * 4)) * 100)}%` : "0%"}</div>
