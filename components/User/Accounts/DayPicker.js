@@ -63,7 +63,6 @@ const DayPicker = ({ accountId, savedDay, savedMonth, savedYear }) => {
         <div className="flex flex-col gap-2">
           <div className="m-auto text-gray-400 text-xs">Year</div>
           <select value={year} onChange={handleYearChange} className="bg-gray-800 text-gray-400 p-2 rounded focus:outline-none focus:ring-2">
-            <option value="2024">2024</option>
             <option value="2025">2025</option>
           </select>
         </div>
