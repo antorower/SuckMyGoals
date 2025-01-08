@@ -119,7 +119,7 @@ const Accounts = async ({ searchParams }) => {
                     {account.eventsTimestamp.targetReachedDate && account.phaseWeight !== 3 && <div>TaRe: {new Date(account.eventsTimestamp.targetReachedDate).toLocaleDateString("el-GR")}</div>}
                     {account.phaseWeight === 3 && account?.payoutRequestDate?.day && (
                       <div>
-                        PaDa: {account?.payoutRequestDate?.day} / {account?.payoutRequestDate?.month} / 2024
+                        PaDa: {account?.payoutRequestDate?.day} / {account?.payoutRequestDate?.month} / 2025
                       </div>
                     )}
                     {account.phaseWeight === 3 && <div>TiPa: {account.metadata.timesPaid}</div>}
