@@ -27,7 +27,7 @@ const CreateNewAccountForm = ({ userIdAccountOwner, companyName, isAdmin, invest
       }
     }
     if (companyName === "Funding Pips") {
-      if (parseFloat(capital) !== 5000) {
+      if (parseFloat(capital) !== 5000 && parseFloat(capital) !== 25000) {
         toast.warn("Capital is wrong");
         return;
       }
