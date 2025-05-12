@@ -93,6 +93,8 @@ const Stats = async () => {
     .sort((a, b) => b.totalEarnings - a.totalEarnings)
     .slice(0, 3);
 
+  return <div>...</div>;
+
   return (
     <div className="flex flex-col gap-4 p-8 w-full">
       <div className="flex flex-col gap-2 mt-8">
